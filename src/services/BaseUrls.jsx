@@ -1,4 +1,6 @@
-export const BaseUrl = "http://192.168.1.66:3010/api/"
+// export const BaseUrl = "https://dev.foxiomlabs.com/xtrace/api/v1/"
+export const BaseUrl = "/api/v1/"
+
 
 export const userloginapi = "user/login"
 export const restaurantsapi = "restaurants"
