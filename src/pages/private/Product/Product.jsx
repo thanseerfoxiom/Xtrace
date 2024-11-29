@@ -13,6 +13,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { productsapi } from '../../../services/BaseUrls.jsx';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
+import * as XLSX from 'xlsx';
 export default function Products() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide } = useContext(ContextDatas);
@@ -32,7 +33,15 @@ export default function Products() {
 
 
   const [productImagePreview, setProductImagePreview] = useState(null);
+  const exportToExcel = () => {
+    // Convert selectedData to worksheet
+    const ws = XLSX.utils.json_to_sheet(productlistdata?.data?.docs);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'productlistdata');
 
+    // Export the file
+    XLSX.writeFile(wb, 'selected_data.xlsx');
+  };
   const handleImageUpload = (event, setFieldValue) => {
     const file = event.target.files[0];
     if (file) {
@@ -174,6 +183,33 @@ export default function Products() {
                           </li>
                         </ul>
                       </div>
+                      
+                    </div>
+                    <div className="card-header px-0 border-0">
+                
+                        <ul
+                          className="card-tab-links nav-tabs nav"
+                          role="tablist"
+                        >
+                          
+                          
+                          <li>
+                            <a
+                              href="#t_selling-month333"
+                              data-bs-toggle="tab"
+                              id="t_selling-month333-tab"
+                              role="tab"
+                              aria-selected="true"
+                              className='active'
+                              onClick={()=>exportToExcel()
+                              }
+                            >
+                              Export
+                            </a>
+                          </li>
+                        </ul>
+           
+                      
                     </div>
                     <div className="card-body p-0">
                       <div className="tab-content">

@@ -11,10 +11,13 @@ import Table from '../../../components/Table.jsx';
 import FormikField from '../../../components/InputComponents.jsx';
 import { Formik } from 'formik';
 import { Form, Button, Row } from 'react-bootstrap';
-import { fetchReceiving } from '../../../api/index.js';
+import { fetchProduct, fetchReceiving, fetchSuppliers } from '../../../api/index.js';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import Commonmodal from '../../../components/modals/Commonmodal.jsx';
 import { receivingsapi } from '../../../services/BaseUrls.jsx';
+import SingleSelect from '../../../components/ui/SingleSelect.jsx';
+import { useCustomMutation } from '../../../services/useCustomMutation.js';
+import { Pencil, Trash2 } from 'lucide-react';
 export default function Receiving() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide } = useContext(ContextDatas);
@@ -27,8 +30,11 @@ export default function Receiving() {
     pageIndex:0,
     pageSize:10
   })
+  const {mutation} = useCustomMutation();
+  const { data: productlistdata} = useFetchData('product',fetchProduct);
+  const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
   const { data: receivinglist} = useFetchData('receiving',fetchReceiving);
-  console.log("padataa",receivinglist?.data?.docs)
+  console.log("supplierslist",supplierslist?.data?.docs)
   // useEffect(() => {
   //   const timer = setTimeout(() => {
   //     setpageLoading(false);
@@ -36,8 +42,15 @@ export default function Receiving() {
 
   //   return () => clearTimeout(timer);
   // }, []);
-
-
+  const supplierOption = supplierslist?.data?.docs?.map(item => ({
+    label: item.name,
+    value: item.id
+  }));
+  const productlistdataOption = productlistdata?.data?.docs?.map(item => ({
+    label: item.name,
+    value: item.id
+  }));
+  // console.log("supplier value",supplierOption)
   const [productImagePreview, setProductImagePreview] = useState(null);
 
   const handleImageUpload = (event, setFieldValue) => {
@@ -55,7 +68,7 @@ export default function Receiving() {
   const columns = useMemo(() => [
     {
       header: 'supplier',
-      accessorKey: 'supplierId',
+      accessorKey: 'supplier',
     },
     {
       header: 'invoiceNo',
@@ -280,16 +293,27 @@ export default function Receiving() {
       <Form onSubmit={handleSubmit}>
         <Row>
         <SingleSelect
-                    name="priceId_of_PriceType"
-                    label="Choose Sales Price"
-                    placeholder="Select Sales Price"
-                    className="w-full"
-                    // options={pricedataOption.filter(option => option.value !== 1) || []}
-                    variant="primary" 
-                  />          <FormikField name="invoiceNo" type="text" label="invoiceNo" placeholder="Enter InvoieNo..." colWidth={12} />
-          <FormikField name="product" type="text" label="Product" placeholder="Enter product..." colWidth={12} />
-          <FormikField name="productionDate" type="text" label="Product date" placeholder="Enter product date..." colWidth={12} />
-          <FormikField name="expiryDate" type="text" label="Expiry date" placeholder="Enter Expirydate..." colWidth={12} />
+            name="supplier"
+            label="Choose supplier"
+            placeholder="Select supplier"
+            className="w-100"
+            options={supplierOption||[]}
+            // options={pricedataOption.filter(option => option.value !== 1) || []}
+            variant="border" 
+          />          
+          <FormikField name="invoiceNo" type="text" label="invoiceNo" placeholder="Enter InvoieNo..." colWidth={12} />
+          <SingleSelect
+            name="product"
+            label="Choose product"
+            placeholder="Select product"
+            className="w-100"
+            options={productlistdataOption||[]}
+            // options={pricedataOption.filter(option => option.value !== 1) || []}
+            variant="border" 
+          />   
+          {/* <FormikField name="product" type="text" label="Product" placeholder="Enter product..." colWidth={12} /> */}
+          <FormikField name="productionDate" type="date" label="Product date" placeholder="Enter product date..." colWidth={12} />
+          <FormikField name="expiryDate" type="date" label="Expiry date" placeholder="Enter Expirydate..." colWidth={12} />
           <FormikField name="temperature" type="text" label="Temperature" placeholder="Enter temperature..." colWidth={12} />
           <FormikField name="vehicletemperature" type="text" label="Vehicle Temperature" placeholder="Enter vehicle temperature..." colWidth={12} />
           <FormikField name="vehicleNo" type="text" label="VehicleNo" placeholder="Enter vehicleNo..." colWidth={12} />

@@ -1328,7 +1328,9 @@ h6 {
 .border-gray {
     border: 1px solid var(--color-gray)
 }
-
+.border-lightborder {
+    border: 1px solid #d7d8d8
+}
 .bg-opacity-gray-20 {
     background: rgba(var(--color-gray-rgba), .2)
 }
@@ -34351,6 +34353,7 @@ body:after {
     --color-lighters: #f4f5f7;
     --color-lighten-rgba: 173, 181, 217;
     --color-gray-x: var(--white-60);
+    /* --color-lightborder:#d7d8d8; */
     --body-color: var(--white-60);
     --text-color: var(--white-60);
     --light-gray: var(--white-60);

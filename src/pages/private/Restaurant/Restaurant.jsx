@@ -16,6 +16,7 @@ import Commonmodal from '../../../components/modals/Commonmodal.jsx';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import { restaurantsapi } from '../../../services/BaseUrls.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
+import { Pencil, Trash2 } from 'lucide-react';
 export default function Restaurant() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide } = useContext(ContextDatas);
@@ -62,12 +63,12 @@ export default function Restaurant() {
       cell:info=><strong >{info.getValue()}</strong>
     },
     {
-      header: 'Description',
-      accessorKey: 'description',
+      header: 'Phone',
+      accessorKey: 'phone',
     },
     {
-      header: 'Image',
-      accessorKey: 'image',
+      header: 'Address',
+      accessorKey: 'address',
     },
     
     {
@@ -190,7 +191,8 @@ export default function Restaurant() {
   <Formik
     initialValues={{
       name: selectData?.name || "",
-      description: selectData?.description || "",
+      phone: selectData?.phone || "",
+      address: selectData?.address || "",
       ...(selectData?.id ? { id: selectData.id } : {}),
     }}
     validate={values => {
