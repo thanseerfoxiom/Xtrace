@@ -12,6 +12,7 @@ import Commonmodal from '../../../components/modals/Commonmodal.jsx';
 import { Pencil, Trash2 } from 'lucide-react';
 import { productsapi } from '../../../services/BaseUrls.jsx';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
+import { useCustomMutation } from '../../../services/useCustomMutation.js';
 export default function Products() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide } = useContext(ContextDatas);
@@ -24,9 +25,10 @@ export default function Products() {
     pageIndex:0,
     pageSize:10
   })
+  const {mutation} = useCustomMutation();
   // console.log("selectData",selectData)
   const { data: productlistdata} = useFetchData('product',fetchProduct);
-  console.log("productlist",productlistdata)
+  // console.log("productlist",productlistdata)
 
 
   const [productImagePreview, setProductImagePreview] = useState(null);
@@ -43,26 +45,26 @@ export default function Products() {
     }
   };
   // Data for the table
-  const productlist = useMemo(() => [
-    {
+  // const productlist = useMemo(() => [
+  //   {
    
-      name: 'name1',
-      description: 'a tobcompany shfbs sdufbsd fuisdif u kjsdn sjhd fsd faws f jkadb asdjh asjda  ',
-      image: 'to place',
+  //     name: 'name1',
+  //     description: 'a tobcompany shfbs sdufbsd fuisdif u kjsdn sjhd fsd faws f jkadb asdjh asjda  ',
+  //     image: 'to place',
       
-    },
-    {
-      name: 'name2',
-      description: 'a tobcompany shfbs sdufbsd fuisdif u',
-      image: 'to place',
-    },
-    {
-      name: 'name3',
-      description: 'a tobcompany shfbs sdufbsd fuisdif u',
-      image: 'to place',
-    },
+  //   },
+  //   {
+  //     name: 'name2',
+  //     description: 'a tobcompany shfbs sdufbsd fuisdif u',
+  //     image: 'to place',
+  //   },
+  //   {
+  //     name: 'name3',
+  //     description: 'a tobcompany shfbs sdufbsd fuisdif u',
+  //     image: 'to place',
+  //   },
   
-  ], []);
+  // ], []);
 
   // Column definitions
   const columns = useMemo(
@@ -83,7 +85,7 @@ export default function Products() {
           return (
             <ul className="text-align-center d-flex">
               <li>
-                <a href="#" className="view" onClick={()=>handleDeleteConfirmation(row?.original?._id)}>
+                <a href="#" className="view" onClick={()=>handleDeleteConfirmation(row?.original?.id)}>
                   <Trash2 className="wh-20 flex-shrink-0 cursor-pointer" />
                 </a>
                 <a href="#" className="view m-3" onClick={()=>handleShow(row.original)}>
@@ -120,7 +122,7 @@ export default function Products() {
     }
   }
   const handleSubmit = (values, actions) => {
-    const apiurl = values?.id? `${productsapi}/${values._id}` : productsapi;
+    const apiurl = values?.id? `${productsapi}/${values.id}` : productsapi;
     mutation.mutate({
         method: values?.id? "put":"post",
         url: apiurl,
@@ -181,7 +183,7 @@ export default function Products() {
                           role="tabpanel"
                           aria-labelledby="t_selling-today222-tab"
                         >
-                          <Table data={productlist} columns={columns} pagination={pagination} setPagination={setPagination}/>
+                          <Table data={productlistdata?.data?.docs??[]} columns={columns} pagination={pagination} setPagination={setPagination}/>
                           
                         </div>
                       </div>
@@ -198,6 +200,7 @@ export default function Products() {
     initialValues={{
       name: selectData?.name || "",
       description: selectData?.description || "",
+      ...(selectData?.id ? { id: selectData.id } : {}),
     }}
     validate={values => {
       const errors = {};
@@ -205,20 +208,15 @@ export default function Products() {
       if (!values.description) errors.description = 'Description Required';
       return errors;
     }}
-    onSubmit={(values, { setSubmitting }) => {
-      handleSubmit(values)
-      // setTimeout(() => {
-      //   alert(JSON.stringify(values, null, 2));
-      //   setSubmitting(false);
-      //   handleClose(); // Close the modal after submission
-      // }, 400);
+    onSubmit={(values,actions ) => {
+      handleSubmit(values,actions)
     }}
   >
     {({ handleSubmit, isSubmitting }) => (
       <Form onSubmit={handleSubmit}>
         <Row>
           <FormikField name="name" label="Name" placeholder="Enter name..." colWidth={12} />
-          <FormikField name="description" type="text" label="Description" placeholder="Enter description..." colWidth={12} />
+          <FormikField name="description" type="textarea" label="Description" placeholder="Enter description..." colWidth={12} />
         </Row>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -236,7 +234,7 @@ export default function Products() {
         open={confirmationState}
         onOpenChange={setConfirmationState}
         title="Confirm Deletion"
-        message="Are you sure you want to delete this price?"
+        message="Are you sure you want to delete this product ?"
         onConfirm={handleDelete}
         onCancel={setConfirmationState}
       />

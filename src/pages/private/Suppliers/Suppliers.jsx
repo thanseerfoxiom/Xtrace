@@ -15,6 +15,8 @@ import {fetchSuppliers } from '../../../api/index.js';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import Commonmodal from '../../../components/modals/Commonmodal.jsx';
 import { suppliersapi } from '../../../services/BaseUrls.jsx';
+import { Pencil, Trash2 } from 'lucide-react';
+import { useCustomMutation } from '../../../services/useCustomMutation.js';
 export default function Suppliers() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide } = useContext(ContextDatas);
@@ -27,6 +29,7 @@ export default function Suppliers() {
     pageIndex:0,
     pageSize:10
   })
+  const {mutation} = useCustomMutation();
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
   console.log("padataa",supplierslist?.data?.docs)
 
@@ -53,8 +56,8 @@ export default function Suppliers() {
       cell:info=><strong >{info.getValue()}</strong>
     },
     {
-      header: 'Description',
-      accessorKey: 'description',
+      header: 'Phone',
+      accessorKey: 'phone',
     },
    
     {
@@ -65,7 +68,7 @@ export default function Suppliers() {
         return (
           <ul className="text-align-center d-flex">
             <li>
-              <a href="#" className="view" onClick={()=>handleDeleteConfirmation(row?.original?._id)}>
+              <a href="#" className="view" onClick={()=>handleDeleteConfirmation(row?.original?.id)}>
                 <Trash2 className="wh-20 flex-shrink-0 cursor-pointer" />
               </a>
               <a href="#" className="view m-3" onClick={()=>handleShow(row.original)}>
@@ -100,7 +103,7 @@ export default function Suppliers() {
     }
   }
   const handleSubmit = (values, actions) => {
-    const apiurl = values?.id? `${suppliersapi}/${values._id}` : suppliersapi;
+    const apiurl = values?.id? `${suppliersapi}/${values.id}` : suppliersapi;
     mutation.mutate({
         method: values?.id? "put":"post",
         url: apiurl,
@@ -172,32 +175,32 @@ export default function Suppliers() {
               </div>
             </div>
           </div>
-          <Commonmodal show={show} handleClose={handleClose} title={"Product"}>
+          <Commonmodal show={show} handleClose={handleClose} title={"Suppliers"}>
   <Formik
     initialValues={{
       name: selectData?.name || "",
-      description: selectData?.description || "",
+      phone: selectData?.phone || "",
+      ...(selectData?.id ? { id: selectData.id } : {}),
     }}
     validate={values => {
       const errors = {};
       if (!values.name) errors.name = 'Name Required';
-      if (!values.description) errors.description = 'Description Required';
+      if (!values.phone) {
+        errors.phone = 'Phone number is required';
+      } else if (!/^\d{10}$/.test(values.phone)) {
+        errors.phone = 'Phone number must be 10 digits';
+      }
       return errors;
     }}
-    onSubmit={(values, { setSubmitting }) => {
-      handleSubmit(values)
-      // setTimeout(() => {
-      //   alert(JSON.stringify(values, null, 2));
-      //   setSubmitting(false);
-      //   handleClose(); // Close the modal after submission
-      // }, 400);
+    onSubmit={(values,actions) => {
+      handleSubmit(values,actions)
     }}
   >
     {({ handleSubmit, isSubmitting }) => (
       <Form onSubmit={handleSubmit}>
         <Row>
           <FormikField name="name" label="Name" placeholder="Enter name..." colWidth={12} />
-          <FormikField name="description" type="text" label="Description" placeholder="Enter description..." colWidth={12} />
+          <FormikField name="phone" type="text" label="Phone" placeholder="Enter phone..." colWidth={12} />
         </Row>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -215,7 +218,7 @@ export default function Suppliers() {
         open={confirmationState}
         onOpenChange={setConfirmationState}
         title="Confirm Deletion"
-        message="Are you sure you want to delete this price?"
+        message="Are you sure you want to delete this suppliers ?"
         onConfirm={handleDelete}
         onCancel={setConfirmationState}
       />

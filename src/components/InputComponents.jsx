@@ -35,13 +35,22 @@ const FormikField = ({ label, name, type , placeholder, colWidth = 12 , disabled
           }}
         />
       </div>
-        :
+        :type ==="textarea"?(
+          <Form.Control
+          as="textarea"
+          rows={3} // You can customize the rows count
+          placeholder={placeholder}
+          {...field} // Spread Formik's field props
+          disabled={disabled}
+        />
+        ):(
         <Form.Control
         type={type}
         placeholder={placeholder}
         {...field} // Spread Formik's field props
         disabled={disabled}
-      />}
+      />)
+    }
         
         {meta.touched && meta.error ? (
           <div className="text-danger small" >{meta.error}</div>

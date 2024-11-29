@@ -141,11 +141,14 @@ export default function Receiving() {
         values: { ...values },
         key: "receiving",
         next: () => {
-          handleClose(); 
+          // handleClose(); 
           actions.resetForm()
           setdata(null)
+          actions.setSubmitting(false)
         },
-    },       { onError: (error) => {
+    },
+      { onError: (error) => {
+        
       actions.setSubmitting(false); 
     },}
   );
@@ -208,29 +211,88 @@ export default function Receiving() {
           <Commonmodal show={show} handleClose={handleClose} title={"Product"}>
   <Formik
     initialValues={{
-      name: selectData?.name || "",
-      description: selectData?.description || "",
+      supplier: selectData?.supplier || "",
+      invoiceNo: selectData?.invoiceNo || "",
+      product: selectData?.product || "",
+      productionDate: selectData?.productionDate || "",
+      expiryDate: selectData?.expiryDate || "",
+      temperature: selectData?.temperature || "",
+      vehicletemperature: selectData?.vehicletemperature || "",
+      vehicleNo: selectData?.vehicleNo || "",
     }}
     validate={values => {
       const errors = {};
-      if (!values.name) errors.name = 'Name Required';
-      if (!values.description) errors.description = 'Description Required';
+      // Supplier validation
+  if (!values.supplier) {
+    errors.supplier = 'Supplier is required';
+  }
+
+  // Invoice number validation
+  if (!values.invoiceNo) {
+    errors.invoiceNo = 'Invoice number is required';
+  }
+
+  // Product validation
+  if (!values.product) {
+    errors.product = 'Product is required';
+  }
+
+  // Production date validation
+  if (!values.productionDate) {
+    errors.productionDate = 'Production date is required';
+  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(values.productionDate)) {
+    errors.productionDate = 'Enter a valid date in YYYY-MM-DD format';
+  }
+
+  // Expiry date validation
+  if (!values.expiryDate) {
+    errors.expiryDate = 'Expiry date is required';
+  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(values.expiryDate)) {
+    errors.expiryDate = 'Enter a valid date in YYYY-MM-DD format';
+  }
+
+  // Temperature validation
+  if (!values.temperature) {
+    errors.temperature = 'Temperature is required';
+  } else if (isNaN(values.temperature)) {
+    errors.temperature = 'Temperature must be a number';
+  }
+
+  // Vehicle temperature validation
+  if (!values.vehicletemperature) {
+    errors.vehicletemperature = 'Vehicle temperature is required';
+  } else if (isNaN(values.vehicletemperature)) {
+    errors.vehicletemperature = 'Vehicle temperature must be a number';
+  }
+
+  // Vehicle number validation
+  if (!values.vehicleNo) {
+    errors.vehicleNo = 'Vehicle number is required';
+  }
       return errors;
     }}
-    onSubmit={(values, { setSubmitting }) => {
-      handleSubmit(values)
-      // setTimeout(() => {
-      //   alert(JSON.stringify(values, null, 2));
-      //   setSubmitting(false);
-      //   handleClose(); // Close the modal after submission
-      // }, 400);
+    onSubmit={(values, actions) => {
+      handleSubmit(values,actions)
+
     }}
   >
     {({ handleSubmit, isSubmitting }) => (
       <Form onSubmit={handleSubmit}>
         <Row>
-          <FormikField name="name" label="Name" placeholder="Enter name..." colWidth={12} />
-          <FormikField name="description" type="text" label="Description" placeholder="Enter description..." colWidth={12} />
+        <SingleSelect
+                    name="priceId_of_PriceType"
+                    label="Choose Sales Price"
+                    placeholder="Select Sales Price"
+                    className="w-full"
+                    // options={pricedataOption.filter(option => option.value !== 1) || []}
+                    variant="primary" 
+                  />          <FormikField name="invoiceNo" type="text" label="invoiceNo" placeholder="Enter InvoieNo..." colWidth={12} />
+          <FormikField name="product" type="text" label="Product" placeholder="Enter product..." colWidth={12} />
+          <FormikField name="productionDate" type="text" label="Product date" placeholder="Enter product date..." colWidth={12} />
+          <FormikField name="expiryDate" type="text" label="Expiry date" placeholder="Enter Expirydate..." colWidth={12} />
+          <FormikField name="temperature" type="text" label="Temperature" placeholder="Enter temperature..." colWidth={12} />
+          <FormikField name="vehicletemperature" type="text" label="Vehicle Temperature" placeholder="Enter vehicle temperature..." colWidth={12} />
+          <FormikField name="vehicleNo" type="text" label="VehicleNo" placeholder="Enter vehicleNo..." colWidth={12} />
         </Row>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -249,7 +311,7 @@ export default function Receiving() {
         open={confirmationState}
         onOpenChange={setConfirmationState}
         title="Confirm Deletion"
-        message="Are you sure you want to delete this price?"
+        message="Are you sure you want to delete this Recieving?"
         onConfirm={handleDelete}
         onCancel={setConfirmationState}
       />

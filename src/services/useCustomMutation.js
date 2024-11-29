@@ -23,7 +23,7 @@ export const useCustomMutation = () => {
      
         if(response?.statusCode===500){
           ShowToast("Internal Server Error", "error");
-          return
+          throw new Error("Internal Server Error")
         }
         ShowToast(response?.response?.data?.message, "error");
         
