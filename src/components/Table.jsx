@@ -9,7 +9,7 @@ export default function Table({data,columns,pagination,setPagination}) {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     state:{pagination},
-    onPaginationChange:()=>setPagination,
+    onPaginationChange:setPagination,
     pageCount:Math.ceil(data?.length/pagination?.pageSize)
   });
   return (<>

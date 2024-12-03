@@ -18,6 +18,7 @@ import { receivingsapi } from '../../../services/BaseUrls.jsx';
 import SingleSelect from '../../../components/ui/SingleSelect.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { Pencil, Trash2 } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
 export default function Receiving() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide } = useContext(ContextDatas);
@@ -34,7 +35,7 @@ export default function Receiving() {
   const { data: productlistdata} = useFetchData('product',fetchProduct);
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
   const { data: receivinglist} = useFetchData('receiving',fetchReceiving);
-  console.log("supplierslist",supplierslist?.data?.docs)
+  console.log("reciving............",receivinglist?.data?.docs)
   // useEffect(() => {
   //   const timer = setTimeout(() => {
   //     setpageLoading(false);
@@ -65,10 +66,25 @@ export default function Receiving() {
     }
   };
  
+  const formatDate = (isoString) => {
+    if (!isoString) return ''; // Handle undefined or null
+  
+    try {
+      const date = parseISO(isoString);
+      return format(date, 'yyyy-MM-dd');
+    } catch (error) {
+      console.error('Invalid date string:', isoString);
+      return '';
+    }
+  };
+  
   const columns = useMemo(() => [
     {
       header: 'supplier',
       accessorKey: 'supplier',
+      cell:({row})=>{
+        return row?.original?.supplier?.name
+      }
     },
     {
       header: 'invoiceNo',
@@ -77,7 +93,10 @@ export default function Receiving() {
     },
     {
       header: 'Product',
-      accessorKey: 'productId',
+      accessorKey: 'product',
+      cell:({row})=>{
+        return row?.original?.product?.name
+      }
     },
     {
       header: 'quantity',
@@ -86,10 +105,16 @@ export default function Receiving() {
     {
       header: 'productionDate',
       accessorKey: 'productionDate',
+      cell: ({row})=>{
+        return formatDate(row?.original?.productionDate)
+      }
     },
     {
       header: 'expiryDate',
       accessorKey: 'expiryDate',
+      cell: ({row})=>{
+        return formatDate(row?.original?.expiryDate)
+      }
     },
     {
       header: 'temperature',
@@ -109,14 +134,14 @@ export default function Receiving() {
         // Define functions inside the cell property
         
         return (
-          <ul className="text-align-center d-flex">
+          <ul className="d-flex justify-content-center">
             <li>
-              <a href="#" className="view" onClick={()=>handleDeleteConfirmation(row?.original?._id)}>
+              <a href="#" className="view" onClick={()=>handleDeleteConfirmation(row?.original?.id)}>
                 <Trash2 className="wh-20 flex-shrink-0 cursor-pointer" />
               </a>
-              <a href="#" className="view m-3" onClick={()=>handleShow(row.original)}>
+              {/* <a href="#" className="view m-3" onClick={()=>handleShow(row.original)}>
                 <Pencil className="wh-20 flex-shrink-0 cursor-pointer" />
-              </a>
+              </a> */}
             </li>
           </ul>
         );
@@ -146,15 +171,18 @@ export default function Receiving() {
       console.log(error)
     }
   }
+  console.log("selectData",selectData)
   const handleSubmit = (values, actions) => {
+    console.log("id",values)
+    const payload =values?.id?values: [values] 
     const apiurl = values?.id? `${receivingsapi}/${values.id}` : receivingsapi;
     mutation.mutate({
         method: values?.id? "put":"post",
         url: apiurl,
-        values: { ...values },
+        values: payload,
         key: "receiving",
         next: () => {
-          // handleClose(); 
+          handleClose(); 
           actions.resetForm()
           setdata(null)
           actions.setSubmitting(false)
@@ -224,29 +252,36 @@ export default function Receiving() {
           <Commonmodal show={show} handleClose={handleClose} title={"Product"}>
   <Formik
     initialValues={{
-      supplier: selectData?.supplier || "",
+      supplierId: selectData?.supplierId || "",
       invoiceNo: selectData?.invoiceNo || "",
-      product: selectData?.product || "",
-      productionDate: selectData?.productionDate || "",
-      expiryDate: selectData?.expiryDate || "",
+      productId: selectData?.productId || "",
+      quantity: selectData?.quantity || "",
+      productionDate: formatDate(selectData?.productionDate) || "",
+      expiryDate: formatDate(selectData?.expiryDate) || "",
       temperature: selectData?.temperature || "",
-      vehicletemperature: selectData?.vehicletemperature || "",
+      vehicleTemperature: selectData?.vehicleTemperature || "",
       vehicleNo: selectData?.vehicleNo || "",
+      ...(selectData?.id ? { id: selectData.id } : {}),
     }}
     validate={values => {
       const errors = {};
       // Supplier validation
-  if (!values.supplier) {
-    errors.supplier = 'Supplier is required';
+  if (!values.supplierId) {
+    errors.supplierId = 'Supplier is required';
   }
 
   // Invoice number validation
   if (!values.invoiceNo) {
     errors.invoiceNo = 'Invoice number is required';
   }
+  if (!values.quantity) {
+    errors.quantity = 'quantity is required';
+  } else if (isNaN(values.quantity)) {
+    errors.quantity = 'quantity must be a number';
+  }
 
   // Product validation
-  if (!values.product) {
+  if (!values.productId) {
     errors.product = 'Product is required';
   }
 
@@ -272,10 +307,10 @@ export default function Receiving() {
   }
 
   // Vehicle temperature validation
-  if (!values.vehicletemperature) {
-    errors.vehicletemperature = 'Vehicle temperature is required';
-  } else if (isNaN(values.vehicletemperature)) {
-    errors.vehicletemperature = 'Vehicle temperature must be a number';
+  if (!values.vehicleTemperature) {
+    errors.vehicleTemperature = 'Vehicle temperature is required';
+  } else if (isNaN(values.vehicleTemperature)) {
+    errors.vehicleTemperature = 'Vehicle temperature must be a number';
   }
 
   // Vehicle number validation
@@ -293,7 +328,7 @@ export default function Receiving() {
       <Form onSubmit={handleSubmit}>
         <Row>
         <SingleSelect
-            name="supplier"
+            name="supplierId"
             label="Choose supplier"
             placeholder="Select supplier"
             className="w-100"
@@ -303,7 +338,7 @@ export default function Receiving() {
           />          
           <FormikField name="invoiceNo" type="text" label="invoiceNo" placeholder="Enter InvoieNo..." colWidth={12} />
           <SingleSelect
-            name="product"
+            name="productId"
             label="Choose product"
             placeholder="Select product"
             className="w-100"
@@ -311,11 +346,11 @@ export default function Receiving() {
             // options={pricedataOption.filter(option => option.value !== 1) || []}
             variant="border" 
           />   
-          {/* <FormikField name="product" type="text" label="Product" placeholder="Enter product..." colWidth={12} /> */}
+          <FormikField name="quantity" type="text" label="Quantity" placeholder="Enter quantity..." colWidth={12} />
           <FormikField name="productionDate" type="date" label="Product date" placeholder="Enter product date..." colWidth={12} />
           <FormikField name="expiryDate" type="date" label="Expiry date" placeholder="Enter Expirydate..." colWidth={12} />
-          <FormikField name="temperature" type="text" label="Temperature" placeholder="Enter temperature..." colWidth={12} />
-          <FormikField name="vehicletemperature" type="text" label="Vehicle Temperature" placeholder="Enter vehicle temperature..." colWidth={12} />
+          <FormikField name="temperature" type="number" label="Temperature" placeholder="Enter temperature..." colWidth={12} />
+          <FormikField name="vehicleTemperature" type="number" label="Vehicle Temperature" placeholder="Enter vehicle temperature..." colWidth={12} />
           <FormikField name="vehicleNo" type="text" label="VehicleNo" placeholder="Enter vehicleNo..." colWidth={12} />
         </Row>
         <Modal.Footer>

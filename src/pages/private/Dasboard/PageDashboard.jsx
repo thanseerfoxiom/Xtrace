@@ -55,7 +55,7 @@ function PageDashboard() {
                       </div>
                       <div className="d-flex align-items-start flex-wrap">
                         <div>
-                          <p className="mb-1 mb-0 color-gray">Total Awards</p>
+                          <p className="mb-1 mb-0 color-gray">Total Restuarants</p>
                           <h1>15K</h1>
                         </div>
                       </div>
@@ -90,7 +90,7 @@ function PageDashboard() {
               </div>
             </div>
            
-           
+           {/* 
             <div className="col-xxl-8">
               <div className="row">
                 <div className="col-md-6 mb-25">
@@ -390,7 +390,7 @@ function PageDashboard() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
             
           </div>
         </div>

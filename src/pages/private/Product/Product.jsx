@@ -13,7 +13,8 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { productsapi } from '../../../services/BaseUrls.jsx';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
-import * as XLSX from 'xlsx';
+import Papa from "papaparse";
+
 export default function Products() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide } = useContext(ContextDatas);
@@ -29,18 +30,20 @@ export default function Products() {
   const {mutation} = useCustomMutation();
   // console.log("selectData",selectData)
   const { data: productlistdata} = useFetchData('product',fetchProduct);
-  // console.log("productlist",productlistdata)
+  console.log("productlist",productlistdata?.data?.docs)
 
 
   const [productImagePreview, setProductImagePreview] = useState(null);
-  const exportToExcel = () => {
-    // Convert selectedData to worksheet
-    const ws = XLSX.utils.json_to_sheet(productlistdata?.data?.docs);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'productlistdata');
+  const handleExport = () => {
+    const data = productlistdata?.data?.docs
 
-    // Export the file
-    XLSX.writeFile(wb, 'selected_data.xlsx');
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "ExportedProductData.csv";
+    link.click();
   };
   const handleImageUpload = (event, setFieldValue) => {
     const file = event.target.files[0];
@@ -53,29 +56,7 @@ export default function Products() {
       reader.readAsDataURL(file);
     }
   };
-  // Data for the table
-  // const productlist = useMemo(() => [
-  //   {
-   
-  //     name: 'name1',
-  //     description: 'a tobcompany shfbs sdufbsd fuisdif u kjsdn sjhd fsd faws f jkadb asdjh asjda  ',
-  //     image: 'to place',
-      
-  //   },
-  //   {
-  //     name: 'name2',
-  //     description: 'a tobcompany shfbs sdufbsd fuisdif u',
-  //     image: 'to place',
-  //   },
-  //   {
-  //     name: 'name3',
-  //     description: 'a tobcompany shfbs sdufbsd fuisdif u',
-  //     image: 'to place',
-  //   },
-  
-  // ], []);
 
-  // Column definitions
   const columns = useMemo(
     () => [
       {
@@ -194,18 +175,18 @@ export default function Products() {
                           
                           
                           <li>
-                            <a
-                              href="#t_selling-month333"
+                            <button
+                              
                               data-bs-toggle="tab"
                               id="t_selling-month333-tab"
                               role="tab"
                               aria-selected="true"
-                              className='active'
-                              onClick={()=>exportToExcel()
+                              className='btn btn-primary'
+                              onClick={()=>handleExport()
                               }
                             >
-                              Export
-                            </a>
+                              Export Excel
+                            </button>
                           </li>
                         </ul>
            
