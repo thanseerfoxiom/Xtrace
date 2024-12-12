@@ -65,6 +65,10 @@ export default function Products() {
         cell: (info) => <strong>{info.getValue()}</strong>,
       },
       {
+        header: 'Unit of measure',
+        accessorKey: 'uom',
+      },
+      {
         header: 'Description',
         accessorKey: 'description',
       },
@@ -218,13 +222,14 @@ export default function Products() {
   <Formik
     initialValues={{
       name: selectData?.name || "",
+      uom: selectData?.uom || "",
       description: selectData?.description || "",
       ...(selectData?.id ? { id: selectData.id } : {}),
     }}
     validate={values => {
       const errors = {};
       if (!values.name) errors.name = 'Name Required';
-      if (!values.description) errors.description = 'Description Required';
+      // if (!values.description) errors.description = 'Description Required';
       return errors;
     }}
     onSubmit={(values,actions ) => {
@@ -235,6 +240,7 @@ export default function Products() {
       <Form onSubmit={handleSubmit}>
         <Row>
           <FormikField name="name" label="Name" placeholder="Enter name..." colWidth={12} />
+          <FormikField name="uom" label="Unit of measure" placeholder="Enter unit..." colWidth={12} />
           <FormikField name="description" type="textarea" label="Description" placeholder="Enter description..." colWidth={12} />
         </Row>
         <Modal.Footer>
