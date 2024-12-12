@@ -17,6 +17,7 @@ import Commonmodal from '../../../components/modals/Commonmodal.jsx';
 import { suppliersapi } from '../../../services/BaseUrls.jsx';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
+import Papa from "papaparse";
 export default function Suppliers() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide } = useContext(ContextDatas);
@@ -36,18 +37,18 @@ export default function Suppliers() {
 
   const [productImagePreview, setProductImagePreview] = useState(null);
 
-  const handleImageUpload = (event, setFieldValue) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProductImagePreview(reader.result);
-        setFieldValue('productDetails', file);
-      };
-      reader.readAsDataURL(file);
-    }
+
+  const handleExport = () => {
+    const data = supplierslist?.data?.docs
+
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "ExportedSupplierData.csv";
+    link.click();
   };
-  
   // Column definitions
   const columns = useMemo(() => [
     {
@@ -157,6 +158,33 @@ export default function Suppliers() {
                         </ul>
                       </div>
                     </div>
+                    <div className="card-header px-0 border-0">
+                
+                <ul
+                  className="card-tab-links nav-tabs nav"
+                  role="tablist"
+                >
+                  
+                  
+                 
+                  <li>
+                    <button
+                      
+                      data-bs-toggle="tab"
+                      id="t_selling-month333-tab"
+                      role="tab"
+                      aria-selected="true"
+                      className='btn btn-primary'
+                      onClick={()=>handleExport()
+                      }
+                    >
+                      Export Excel
+                    </button>
+                  </li>
+                </ul>
+   
+              
+            </div>
                     <div className="card-body p-0">
                       <div className="tab-content">
                         <div

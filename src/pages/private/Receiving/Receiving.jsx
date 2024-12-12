@@ -19,6 +19,8 @@ import SingleSelect from '../../../components/ui/SingleSelect.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { Pencil, Trash2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import Papa from "papaparse";
+
 export default function Receiving() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide } = useContext(ContextDatas);
@@ -35,7 +37,6 @@ export default function Receiving() {
   const { data: productlistdata} = useFetchData('product',fetchProduct);
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
   const { data: receivinglist} = useFetchData('receiving',fetchReceiving);
-  console.log("reciving............",receivinglist?.data?.docs)
   // useEffect(() => {
   //   const timer = setTimeout(() => {
   //     setpageLoading(false);
@@ -43,6 +44,79 @@ export default function Receiving() {
 
   //   return () => clearTimeout(timer);
   // }, []);
+  // const handleExport = () => {
+  //   const data = receivinglist?.data?.docs
+  //   console.log("dataaaaaaaaaa",data)
+  //   const csv = Papa.unparse(data);
+  //   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  //   const url = URL.createObjectURL(blob);
+  //   const link = document.createElement("a");
+  //   link.href = url;
+  //   link.download = "ExportedReceivingData.csv";
+  //   link.click();
+  // };
+  const handleExport = () => {
+    // Access the raw data
+    const rawData = receivinglist?.data?.docs;
+  
+    if (!rawData || rawData.length === 0) {
+      console.error("No data available for export.");
+      return;
+    }
+  
+    // Transform the data to include supplierName and productName
+    const transformedData = rawData.map(item => ({
+      supplierName: item.supplier?.name || "Unknown",
+      invoiceNo: item.invoiceNo,
+      productName: item.product?.name || "Unknown",
+      quantity: parseFloat(item.quantity) || 0,
+      uom: item.uom || "N/A",
+      productionDate: formatDate(item.productionDate) || "N/A",
+      expiryDate: formatDate(item.expiryDate) || "N/A",
+      temperature: parseFloat(item.temperature) || 0,
+      vehicleTemperature: parseFloat(item.vehicleTemperature) || 0,
+      vehicleNo: item.vehicleNo || "N/A",
+    }));
+  
+    console.log("Transformed Data:", transformedData);
+  
+    // Convert the data to CSV
+    try {
+      const csv = Papa.unparse(transformedData); // Ensure PapaParse is installed and imported
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+  
+      // Create a download link
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "ExportedReceivingData.csv";
+      link.click();
+  
+      // Clean up the URL object
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error exporting data to CSV:", error);
+    }
+  };
+  
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      Papa.parse(file, {
+        header: true, // Treat the first row as column headers
+        skipEmptyLines: true, // Skip empty lines
+        complete: (result) => {
+          const data = result.data; // Parsed JSON data
+          // setJsonData(data);
+          console.log("JSON Data:", data);
+        },
+        error: (error) => {
+          console.error("Error parsing CSV:", error);
+        },
+      });
+    }
+  };
   const supplierOption = supplierslist?.data?.docs?.map(item => ({
     label: item.name,
     value: item.id
@@ -54,24 +128,14 @@ export default function Receiving() {
   // console.log("supplier value",supplierOption)
   const [productImagePreview, setProductImagePreview] = useState(null);
 
-  const handleImageUpload = (event, setFieldValue) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProductImagePreview(reader.result);
-        setFieldValue('productDetails', file);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+ 
  
   const formatDate = (isoString) => {
     if (!isoString) return ''; // Handle undefined or null
   
     try {
       const date = parseISO(isoString);
-      return format(date, 'yyyy-MM-dd');
+      return format(date,'dd-MM-yyyy');
     } catch (error) {
       console.error('Invalid date string:', isoString);
       return '';
@@ -80,14 +144,14 @@ export default function Receiving() {
   
   const columns = useMemo(() => [
     {
-      header: 'supplier',
+      header: 'Supplier',
       accessorKey: 'supplier',
       cell:({row})=>{
         return row?.original?.supplier?.name
       }
     },
     {
-      header: 'invoiceNo',
+      header: 'InvoiceNo',
       accessorKey: 'invoiceNo',
       cell:info=><strong >{info.getValue()}</strong>
     },
@@ -99,33 +163,37 @@ export default function Receiving() {
       }
     },
     {
-      header: 'quantity',
+      header: 'Quantity',
       accessorKey: 'quantity',
     },
     {
-      header: 'productionDate',
+      header: 'Unit of measure',
+      accessorKey: 'uom',
+    },
+    {
+      header: 'ProductionDate',
       accessorKey: 'productionDate',
       cell: ({row})=>{
         return formatDate(row?.original?.productionDate)
       }
     },
     {
-      header: 'expiryDate',
+      header: 'ExpiryDate',
       accessorKey: 'expiryDate',
       cell: ({row})=>{
         return formatDate(row?.original?.expiryDate)
       }
     },
     {
-      header: 'temperature',
+      header: 'Temperature',
       accessorKey: 'temperature',
     },
     {
-      header: 'vehicleTemperature',
+      header: 'VehicleTemperature',
       accessorKey: 'vehicleTemperature',
     },
     {
-      header: 'vehicleNo',
+      header: 'VehicleNo',
       accessorKey: 'vehicleNo',
     },
     {
@@ -171,7 +239,7 @@ export default function Receiving() {
       console.log(error)
     }
   }
-  console.log("selectData",selectData)
+  // console.log("selectData",selectData)
   const handleSubmit = (values, actions) => {
     console.log("id",values)
     const payload =values?.id?values: [values] 
@@ -231,6 +299,54 @@ export default function Receiving() {
                         </ul>
                       </div>
                     </div>
+                    <div className="card-header px-0 border-0">
+                
+                        <ul
+                          className="card-tab-links nav-tabs nav"
+                          role="tablist"
+                        >
+                          
+                          
+                          <li>
+                          <div>
+      <button
+        data-bs-toggle="tab"
+        id="t_selling-month333-tab"
+        role="tab"
+        aria-selected="true"
+        className="btn btn-primary"
+        onClick={() => document.getElementById("fileInput").click()}
+      >
+        Import CSV
+      </button>
+      <input
+        type="file"
+        id="fileInput"
+        accept=".csv"
+        style={{ display: "none" }}
+        onChange={handleFileUpload}
+      />
+      {/* <pre>{JSON.stringify(jsonData, null, 2)}</pre> */}
+    </div>
+                          </li>
+                          <li>
+                            <button
+                              
+                              data-bs-toggle="tab"
+                              id="t_selling-month333-tab"
+                              role="tab"
+                              aria-selected="true"
+                              className='btn btn-primary'
+                              onClick={()=>handleExport()
+                              }
+                            >
+                              Export Excel
+                            </button>
+                          </li>
+                        </ul>
+           
+                      
+                    </div>
                     <div className="card-body p-0">
                       <div className="tab-content">
                         <div
@@ -239,7 +355,9 @@ export default function Receiving() {
                           role="tabpanel"
                           aria-labelledby="t_selling-today222-tab"
                         >
-                          <Table data={receivinglist?.data?.docs??[]} columns={columns} pagination={pagination} setPagination={setPagination}/>
+                          <Table data={receivinglist?.data?.docs??[]} columns={columns} pagination={pagination}
+                          // setPagination={setPagination}
+                          />
                           
                         </div>
                       </div>
@@ -256,6 +374,7 @@ export default function Receiving() {
       invoiceNo: selectData?.invoiceNo || "",
       productId: selectData?.productId || "",
       quantity: selectData?.quantity || "",
+      uom: selectData?.uom || "",
       productionDate: formatDate(selectData?.productionDate) || "",
       expiryDate: formatDate(selectData?.expiryDate) || "",
       temperature: selectData?.temperature || "",
@@ -347,6 +466,7 @@ export default function Receiving() {
             variant="border" 
           />   
           <FormikField name="quantity" type="text" label="Quantity" placeholder="Enter quantity..." colWidth={12} />
+          <FormikField name="uom" type="text" label="unit of measure" placeholder="Enter unit..." colWidth={12} />
           <FormikField name="productionDate" type="date" label="Product date" placeholder="Enter product date..." colWidth={12} />
           <FormikField name="expiryDate" type="date" label="Expiry date" placeholder="Enter Expirydate..." colWidth={12} />
           <FormikField name="temperature" type="number" label="Temperature" placeholder="Enter temperature..." colWidth={12} />

@@ -200,7 +200,9 @@ export default function Products() {
                           role="tabpanel"
                           aria-labelledby="t_selling-today222-tab"
                         >
-                          <Table data={productlistdata?.data?.docs??[]} columns={columns} pagination={pagination} setPagination={setPagination}/>
+                          <Table data={productlistdata?.data?.docs??[]} columns={columns} pagination={pagination}
+                           //setPagination={setPagination}
+                           />
                           
                         </div>
                       </div>
