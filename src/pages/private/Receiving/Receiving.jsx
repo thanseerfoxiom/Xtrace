@@ -66,8 +66,8 @@ export default function Receiving() {
   
     // Transform the data to include supplierName and productName
     const transformedData = rawData.map(item => ({
-      supplierName: item.supplier?.name || "Unknown",
       invoiceNo: item.invoiceNo,
+      supplierName: item.supplier?.name || "Unknown",
       productName: item.product?.name || "Unknown",
       quantity: parseFloat(item.quantity) || 0,
       uom: item.uom || "N/A",
@@ -78,7 +78,7 @@ export default function Receiving() {
       vehicleNo: item.vehicleNo || "N/A",
     }));
   
-    console.log("Transformed Data:", transformedData);
+    // console.log("Transformed Data:", transformedData);
   
     // Convert the data to CSV
     try {
@@ -144,17 +144,18 @@ export default function Receiving() {
   
   const columns = useMemo(() => [
     {
+      header: 'InvoiceNo',
+      accessorKey: 'invoiceNo',
+      cell:info=><strong >{info.getValue()}</strong>
+    },
+    {
       header: 'Supplier',
       accessorKey: 'supplier',
       cell:({row})=>{
         return row?.original?.supplier?.name
       }
     },
-    {
-      header: 'InvoiceNo',
-      accessorKey: 'invoiceNo',
-      cell:info=><strong >{info.getValue()}</strong>
-    },
+    
     {
       header: 'Product',
       accessorKey: 'product',
@@ -336,7 +337,8 @@ export default function Receiving() {
                               id="t_selling-month333-tab"
                               role="tab"
                               aria-selected="true"
-                              className='btn btn-primary'
+                              className='btn btn-primary '
+                              style={{marginLeft:"1px"}}
                               onClick={()=>handleExport()
                               }
                             >
@@ -390,14 +392,14 @@ export default function Receiving() {
   }
 
   // Invoice number validation
-  if (!values.invoiceNo) {
-    errors.invoiceNo = 'Invoice number is required';
-  }
-  if (!values.quantity) {
-    errors.quantity = 'quantity is required';
-  } else if (isNaN(values.quantity)) {
-    errors.quantity = 'quantity must be a number';
-  }
+  // if (!values.invoiceNo) {
+  //   errors.invoiceNo = 'Invoice number is required';
+  // }
+  // if (!values.quantity) {
+  //   errors.quantity = 'quantity is required';
+  // } else if (isNaN(values.quantity)) {
+  //   errors.quantity = 'quantity must be a number';
+  // }
 
   // Product validation
   if (!values.productId) {
@@ -419,23 +421,23 @@ export default function Receiving() {
   }
 
   // Temperature validation
-  if (!values.temperature) {
-    errors.temperature = 'Temperature is required';
-  } else if (isNaN(values.temperature)) {
-    errors.temperature = 'Temperature must be a number';
-  }
+  // if (!values.temperature) {
+  //   errors.temperature = 'Temperature is required';
+  // } else if (isNaN(values.temperature)) {
+  //   errors.temperature = 'Temperature must be a number';
+  // }
 
   // Vehicle temperature validation
-  if (!values.vehicleTemperature) {
-    errors.vehicleTemperature = 'Vehicle temperature is required';
-  } else if (isNaN(values.vehicleTemperature)) {
-    errors.vehicleTemperature = 'Vehicle temperature must be a number';
-  }
+  // if (!values.vehicleTemperature) {
+  //   errors.vehicleTemperature = 'Vehicle temperature is required';
+  // } else if (isNaN(values.vehicleTemperature)) {
+  //   errors.vehicleTemperature = 'Vehicle temperature must be a number';
+  // }
 
   // Vehicle number validation
-  if (!values.vehicleNo) {
-    errors.vehicleNo = 'Vehicle number is required';
-  }
+  // if (!values.vehicleNo) {
+  //   errors.vehicleNo = 'Vehicle number is required';
+  // }
       return errors;
     }}
     onSubmit={(values, actions) => {
