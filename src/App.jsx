@@ -10,6 +10,8 @@ import {
   ReceivingPath,
   RestuarantPath,
   settingsPath,
+  StorageDetailsPath,
+  StoragesPath,
   SuppliersPath,
 } from "./services/UrlPaths";
 
@@ -19,6 +21,8 @@ import Products from "./pages/private/Product/Product";
 import Suppliers from "./pages/private/Suppliers/Suppliers";
 import Restaurant from "./pages/private/Restaurant/Restaurant";
 import Receiving from "./pages/private/Receiving/Receiving";
+import Storage from "./pages/private/Storage/storage"
+import StorageDetails from "./pages/private/Storage/storageDetails";
 
 
 function App() {
@@ -53,6 +57,12 @@ function App() {
             path={basePath + ReceivingPath}
             element={<Receiving />}
           />
+          
+          <Route
+            path={basePath + StoragesPath}
+            element={<Storage />}
+          />
+       
           
           
           

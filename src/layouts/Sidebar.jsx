@@ -5,6 +5,7 @@ import {
   ProductsPath,
   ReceivingPath,
   RestuarantPath,
+  StoragesPath,
   SuppliersPath,
 } from "../services/UrlPaths";
 import { Link, useNavigate } from "react-router-dom/dist";
@@ -81,6 +82,15 @@ function Sidebar() {
               >
                 <span className="nav-icon uil uil-inbox" />
                 <span className="menu-text">Receiving</span>
+              </Link>
+            </li>
+            <li className={urlPath.includes(StoragesPath) ? "active" : ""}>
+              <Link
+                to={basePath + StoragesPath}
+                onClick={() => setUrlPath(basePath + StoragesPath)}
+              >
+                <span className="nav-icon uil uil-store" />
+                <span className="menu-text">Storage</span>
               </Link>
             </li>
           </ul>

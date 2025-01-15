@@ -181,9 +181,7 @@ export default function Suppliers() {
                       Export Excel
                     </button>
                   </li>
-                </ul>
-   
-              
+                </ul> 
             </div>
                     <div className="card-body p-0">
                       <div className="tab-content">
@@ -194,7 +192,6 @@ export default function Suppliers() {
                           aria-labelledby="t_selling-today222-tab"
                         >
                           <Table data={supplierslist?.data?.docs??[]} columns={columns} pagination={pagination} setPagination={setPagination}/>
-                          
                         </div>
                       </div>
                     </div>

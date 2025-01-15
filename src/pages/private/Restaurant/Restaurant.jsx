@@ -31,7 +31,6 @@ export default function Restaurant() {
   })
   const {mutation} = useCustomMutation();
   const { data: restuarantlist} = useFetchData('restuarant',fetchRestuarent);
-  
   // useEffect(() => {
   //   const timer = setTimeout(() => {
   //     setpageLoading(false);

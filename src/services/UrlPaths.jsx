@@ -9,4 +9,6 @@ export const quotationPath = "quotation"
 export const SuppliersPath = "suppliers"
 export const RestuarantPath = "restuarant"
 export const ReceivingPath = "receiving"
+export const StoragesPath = "storages"
+
 
