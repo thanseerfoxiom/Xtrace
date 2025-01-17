@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { ContextDatas } from "../services/Context";
 import {
   basePath,
+  DishesPath,
   ProductsPath,
   ReceivingPath,
   RestuarantPath,
@@ -74,7 +75,6 @@ function Sidebar() {
             </span> */}
               </Link>
             </li>
-
             <li className={urlPath.includes(ReceivingPath) ? "active" : ""}>
               <Link
                 to={basePath + ReceivingPath}
@@ -91,6 +91,15 @@ function Sidebar() {
               >
                 <span className="nav-icon uil uil-store" />
                 <span className="menu-text">Storage</span>
+              </Link>
+            </li>
+            <li className={urlPath.includes(DishesPath) ? "active" : ""}>
+              <Link
+                to={basePath + DishesPath}
+                onClick={() => setUrlPath(basePath + DishesPath)}
+              >
+                <span className="nav-icon uil uil-crockery" />
+                <span className="menu-text">Dishes</span>
               </Link>
             </li>
           </ul>

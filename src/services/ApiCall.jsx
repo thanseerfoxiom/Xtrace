@@ -20,7 +20,6 @@ export const ApiCall = async (method, endPoint, data, params, is_formdata) => {
       // headers,
     });
     // const res = await axios.get("/api/v1/products")
-    console.log("res",res)
     var response = { status: true, message: res.data };
     return response;
   } catch (error) {

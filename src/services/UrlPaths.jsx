@@ -10,5 +10,7 @@ export const SuppliersPath = "suppliers"
 export const RestuarantPath = "restuarant"
 export const ReceivingPath = "receiving"
 export const StoragesPath = "storages"
+export const DishesPath = "dishes"
+export const ReceipePath = "receipe"
 
 

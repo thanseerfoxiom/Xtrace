@@ -6,11 +6,12 @@ import PageDashboard from "./pages/private/Dasboard/PageDashboard";
 import PageNotFound from "./pages/public/PageNotFound";
 import {
   basePath,
+  DishesPath,
   ProductsPath,
+  ReceipePath,
   ReceivingPath,
   RestuarantPath,
   settingsPath,
-  StorageDetailsPath,
   StoragesPath,
   SuppliersPath,
 } from "./services/UrlPaths";
@@ -22,7 +23,9 @@ import Suppliers from "./pages/private/Suppliers/Suppliers";
 import Restaurant from "./pages/private/Restaurant/Restaurant";
 import Receiving from "./pages/private/Receiving/Receiving";
 import Storage from "./pages/private/Storage/storage"
-import StorageDetails from "./pages/private/Storage/storageDetails";
+import Recepies from "./pages/private/Menu/Recepies";
+import Dishes from "./pages/private/Menu/Dishes";
+
 
 
 function App() {
@@ -61,6 +64,14 @@ function App() {
           <Route
             path={basePath + StoragesPath}
             element={<Storage />}
+          />
+          <Route
+            path={basePath + DishesPath}
+            element={<Dishes />}
+          />
+          <Route
+            path={basePath + ReceipePath}
+            element={<Recepies />}
           />
        
           

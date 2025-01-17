@@ -11,13 +11,13 @@ import Table from '../../../components/Table.jsx';
 import FormikField from '../../../components/InputComponents.jsx';
 import { Formik } from 'formik';
 import { Form, Button, Row } from 'react-bootstrap';
-import { fetchProduct, fetchReceiving, fetchSuppliers } from '../../../api/index.js';
+import { fetchProduct, fetchReceiving, fetchRestuarent, fetchStorageItems, fetchStorages, fetchSuppliers } from '../../../api/index.js';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import Commonmodal from '../../../components/modals/Commonmodal.jsx';
-import { receivingsapi } from '../../../services/BaseUrls.jsx';
+import { moveItemsapi, receivingsapi } from '../../../services/BaseUrls.jsx';
 import SingleSelect from '../../../components/ui/SingleSelect.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
-import { Pencil, Trash2 } from 'lucide-react';
+import { DatabaseBackup,ArchiveRestore, Trash2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Papa from "papaparse";
 
@@ -25,7 +25,9 @@ export default function Receiving() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide } = useContext(ContextDatas);
   const [show, setShow] = useState(false);
+  const [storageshow, setStorageShow] = useState(false);
   const handleClose = () => setShow(false);
+  const handleShow=()=>setShow(true)
   const [confirmationState,setConfirmationState]=useState(false)
   const [deleteId,setDeleteId]=useState(null)
   const [selectData,setselectData] =useState('')
@@ -35,26 +37,11 @@ export default function Receiving() {
   })
   const {mutation} = useCustomMutation();
   const { data: productlistdata} = useFetchData('product',fetchProduct);
-  const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
+  const { data: restuarantlist} = useFetchData('restuarant',fetchRestuarent);
   const { data: receivinglist} = useFetchData('receiving',fetchReceiving);
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setpageLoading(false);
-  //   }, 1000); 
-
-  //   return () => clearTimeout(timer);
-  // }, []);
-  // const handleExport = () => {
-  //   const data = receivinglist?.data?.docs
-  //   console.log("dataaaaaaaaaa",data)
-  //   const csv = Papa.unparse(data);
-  //   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  //   const url = URL.createObjectURL(blob);
-  //   const link = document.createElement("a");
-  //   link.href = url;
-  //   link.download = "ExportedReceivingData.csv";
-  //   link.click();
-  // };
+  const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
+  const { data: storagelist} = useFetchData('storages',fetchStorages);
+  
   const handleExport = () => {
     // Access the raw data
     const rawData = receivinglist?.data?.docs;
@@ -77,9 +64,7 @@ export default function Receiving() {
       vehicleTemperature: parseFloat(item.vehicleTemperature) || 0,
       vehicleNo: item.vehicleNo || "N/A",
     }));
-  
     // console.log("Transformed Data:", transformedData);
-  
     // Convert the data to CSV
     try {
       const csv = Papa.unparse(transformedData); // Ensure PapaParse is installed and imported
@@ -98,8 +83,6 @@ export default function Receiving() {
       console.error("Error exporting data to CSV:", error);
     }
   };
-  
-
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -117,6 +100,14 @@ export default function Receiving() {
       });
     }
   };
+  const Receivingoptions = receivinglist?.data?.docs?.map(item => ({
+    label: item.product?.name,
+    value: item.id
+  }));
+  const Kitchenoptions = restuarantlist?.data?.docs?.map(item => ({
+    label: item?.name,
+    value: item.id
+  }));
   const supplierOption = supplierslist?.data?.docs?.map(item => ({
     label: item.name,
     value: item.id
@@ -125,11 +116,12 @@ export default function Receiving() {
     label: item.name,
     value: item.id
   }));
+  const storageItemlistOption = storagelist?.data?.map(item => ({
+    label: item.name,
+    value: item.id
+  }));
   // console.log("supplier value",supplierOption)
   const [productImagePreview, setProductImagePreview] = useState(null);
-
- 
- 
   const formatDate = (isoString) => {
     if (!isoString) return ''; // Handle undefined or null
   
@@ -141,7 +133,6 @@ export default function Receiving() {
       return '';
     }
   };
-  
   const columns = useMemo(() => [
     {
       header: 'InvoiceNo',
@@ -155,7 +146,6 @@ export default function Receiving() {
         return row?.original?.supplier?.name
       }
     },
-    
     {
       header: 'Product',
       accessorKey: 'product',
@@ -168,7 +158,7 @@ export default function Receiving() {
       accessorKey: 'quantity',
     },
     {
-      header: 'Unit of measure',
+      header: 'UOM',
       accessorKey: 'uom',
     },
     {
@@ -186,11 +176,11 @@ export default function Receiving() {
       }
     },
     {
-      header: 'Temperature',
+      header: 'Temp',
       accessorKey: 'temperature',
     },
     {
-      header: 'VehicleTemperature',
+      header: 'VehicleTemp',
       accessorKey: 'vehicleTemperature',
     },
     {
@@ -198,10 +188,37 @@ export default function Receiving() {
       accessorKey: 'vehicleNo',
     },
     {
+      header: 'Move to storage',
+      cell: ({ row }) => {
+        
+        // Define functions inside the cell property
+        return (
+          row.original?.storagedItem?
+          <ul className="d-flex justify-content-center">
+          <li><p>{row.original.storagedItem?.storage.name}</p></li>
+        </ul>
+          :
+          
+        <ul className="d-flex justify-content-center">
+        <li>
+          <a href="#" className="view" onClick={()=>
+                          {setStorageShow(true); 
+                            setselectData(row?.original)}
+                          } >
+            <ArchiveRestore className="wh-20 flex-shrink-0 cursor-pointer" />
+          </a>
+          {/* <a href="#" className="view m-3" onClick={()=>handleShow(row.original)}>
+            <Pencil className="wh-20 flex-shrink-0 cursor-pointer" />
+          </a> */}
+        </li>
+      </ul>
+        );
+      },
+    },
+    {
       header: 'Action',
       cell: ({ row }) => {
         // Define functions inside the cell property
-        
         return (
           <ul className="d-flex justify-content-center">
             <li>
@@ -217,17 +234,16 @@ export default function Receiving() {
       },
     },
   ], []);
-  
+
   const handleDeleteConfirmation = (deleteId) => {
     setConfirmationState(true);
     setDeleteId(deleteId);
   };
-
-  const handleShow = (selectedData) => {
-    setShow(true);
+  const handleStorageShow = (selectedData) => {
+    setStorageShow(true);
     setselectData(selectedData);
   };
-
+  
   const handleDelete=()=>{
     try {
       mutation.mutate({
@@ -258,11 +274,30 @@ export default function Receiving() {
         },
     },
       { onError: (error) => {
-        
       actions.setSubmitting(false); 
     },}
   );
   };
+
+  const handleStorageSubmit=(values,actions)=>{
+    mutation.mutate({
+        method: values?.id? "put":"post",
+        url: moveItemsapi,
+        values: values,
+        key: "storageitems",
+        next: () => {
+          setStorageShow(false) 
+          actions.resetForm()
+          setdata(null)
+          actions.setSubmitting(false)
+        },
+    },
+      { onError: (error) => {
+        actions.setSubmitting(false); 
+    },}
+  );
+  }
+ 
   return (
     <>
        (
@@ -480,7 +515,7 @@ export default function Receiving() {
             Close
           </Button>
           <Button variant="primary" type="submit" disabled={isSubmitting}>
-            Add Product
+            Add Receiving 
           </Button>
         </Modal.Footer>
       </Form>
@@ -496,6 +531,83 @@ export default function Receiving() {
         onConfirm={handleDelete}
         onCancel={setConfirmationState}
       />
+
+      <Commonmodal show={storageshow} handleClose={()=>setStorageShow(false)} title={"Move To Storage"}>
+      <Formik
+    initialValues={{
+      restaurantId: selectData?.restaurantId || "",
+      storageId: selectData?.storageId || "",
+      receivingId: selectData?.id || "",
+      // ...(selectData?.id ? { id: selectData.id } : {}),
+    }}
+    validate={values => {
+      const errors = {};
+      // Supplier validation
+  if (!values.restaurantId) {
+    errors.restaurantId = 'restuarant is required';
+  }
+  if (!values.storageId) {
+    errors.storageId = 'storage is required';
+  }
+  if (!values.receivingId) {
+    errors.receivingId = 'receiving is required';
+  }
+
+      return errors;
+    }}
+    onSubmit={(values, actions) => {
+      handleStorageSubmit(values,actions)
+
+    }}
+  >
+    {({ handleSubmit, isSubmitting,values }) => {
+      return (
+      <Form onSubmit={handleSubmit}>
+        <Row>
+        <SingleSelect
+            name="receivingId"
+            label=" Receiving Product "
+            placeholder="Select Receiving"
+            className="w-100"
+            disabled
+            options={Receivingoptions||[]}
+            // options={pricedataOption.filter(option => option.value !== 1) || []}
+            variant="border" 
+          />          
+        <SingleSelect
+            name="restaurantId"
+            label="Choose kitchen"
+            placeholder="Select kitchen"
+            className="w-100"
+            options={Kitchenoptions||[]}
+            // options={pricedataOption.filter(option => option.value !== 1) || []}
+            variant="border" 
+          />          
+        
+          <SingleSelect
+            name="storageId"
+            label="Choose storage"
+            placeholder="Select Storage"
+            className="w-100"
+            options={storageItemlistOption||[]}
+            // options={pricedataOption.filter(option => option.value !== 1) || []}
+            variant="border" 
+          />   
+          
+
+        </Row>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={()=>setStorageShow(false)}>
+            Close
+          </Button>
+          <Button variant="primary" type="submit" disabled={isSubmitting}>
+            Move to storage
+          </Button>
+        </Modal.Footer>
+      </Form>
+    )}}
+  </Formik>
+      </Commonmodal>
         </div>
       )
     </>

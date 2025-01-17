@@ -21,7 +21,7 @@ import { Eye, Trash2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Papa from "papaparse";
 import { Link, useNavigate } from 'react-router-dom';
-import { StorageDetailsPath } from '../../../services/UrlPaths.jsx';
+
 
 export default function Dishes() {
   const [pageLoading, setpageLoading] = useState(true);
@@ -114,12 +114,8 @@ export default function Dishes() {
             {/* <a href="#" className="view m-3" onClick={()=>navigate(`${StorageDetailsPath}/${row.original.id}`)}>
                 <Eye className="wh-20 flex-shrink-0 cursor-pointer" />
               </a> */}
-              <Link 
-                to={`/${StorageDetailsPath}/${row.original.id}`} 
-                className="view m-3"
-              >
-                <Eye className="wh-20 flex-shrink-0 cursor-pointer" />
-              </Link>
+              
+               
               <a href="#" className="view" onClick={()=>handleDeleteConfirmation(row?.original?.id)}>
                 <Trash2 className="wh-20 flex-shrink-0 cursor-pointer" />
               </a>

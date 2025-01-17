@@ -159,6 +159,7 @@ const SingleSelect = ({
             DropdownIndicator: CustomDropdownIndicator,
           }}
           isClearable // Enable the clear (close) icon
+          isDisabled={props.disabled}
         />
 
         {meta.touched && meta.error ? (

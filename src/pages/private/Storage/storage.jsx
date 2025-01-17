@@ -37,8 +37,8 @@ export default function Storage() {
   const {mutation} = useCustomMutation();
   const { data: productlistdata} = useFetchData('product',fetchProduct);
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
-  const { data: storagelist} = useFetchData('storageitems',fetchStorageItems);
-
+  const { data: storageItemlist} = useFetchData('storageitems',fetchStorageItems);
+  console.log("storageitem list",storageItemlist)
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -88,18 +88,30 @@ export default function Storage() {
         cell: (info) => info.row.index + 1,
       },
     {
-      header: 'Name',
-      accessorKey: 'name',
+      header: 'Product',
+      accessorKey: 'receiving',
+      cell: ({ row }) => (row?.original?.receiving?.product?.name),
     },
-    
     {
-      header: 'TempFrom',
-      accessorKey: 'tempFrom',
+      header: 'Quantity',
+      cell: ({ row }) => (row?.original?.receiving?.quantity),
+    },
+    {
+      header: 'UOM',
+      cell: ({ row }) => (row?.original?.receiving?.uom),
       
     },
     {
-      header: 'TempTo',
-      accessorKey: 'tempTo',
+      header: 'InvoiceNo',
+      cell: ({ row }) => (row?.original?.receiving?.invoiceNo),
+    },
+    {
+      header: 'Kitchen ',
+      cell: ({ row }) => (row?.original?.restaurant?.name),
+    },
+    {
+      header: 'Storage',
+      cell: ({ row }) => (row?.original?.storage?.name),
     },
     
     {
@@ -264,7 +276,7 @@ export default function Storage() {
                           role="tabpanel"
                           aria-labelledby="t_selling-today222-tab"
                         >
-                          <Table data={storagelist?.data??[]} columns={columns} pagination={pagination}
+                          <Table data={storageItemlist?.data?.docs??[]} columns={columns} pagination={pagination}
                           // setPagination={setPagination}
                           />
                           

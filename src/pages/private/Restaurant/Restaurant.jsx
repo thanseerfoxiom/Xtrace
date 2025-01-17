@@ -140,7 +140,7 @@ export default function Restaurant() {
                 <div className="col-xxl-12 mb-25">
                   <div className="card border-0 px-25">
                     <div className="card-header px-0 border-0">
-                      <h6>Restaurant</h6>
+                      <h6>Kitchen</h6>
                       <div className="card-extra">
                         <ul
                           className="card-tab-links nav-tabs nav"
@@ -225,7 +225,7 @@ export default function Restaurant() {
             Close
           </Button>
           <Button variant="primary" type="submit" disabled={isSubmitting}>
-            Add Product
+            Add Kitchen
           </Button>
         </Modal.Footer>
       </Form>
