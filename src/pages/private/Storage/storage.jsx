@@ -14,7 +14,7 @@ import { Form, Button, Row } from 'react-bootstrap';
 import { fetchProduct, fetchStorageItems, fetchStorages, fetchSuppliers } from '../../../api/index.js';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import Commonmodal from '../../../components/modals/Commonmodal.jsx';
-import { receivingsapi } from '../../../services/BaseUrls.jsx';
+import { receivingsapi, storageItemsapi } from '../../../services/BaseUrls.jsx';
 import SingleSelect from '../../../components/ui/SingleSelect.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { Eye, Trash2 } from 'lucide-react';
@@ -24,7 +24,7 @@ import Papa from "papaparse";
 
 export default function Storage() {
   const [pageLoading, setpageLoading] = useState(true);
-  const { mobileSide } = useContext(ContextDatas);
+  const { mobileSide,search } = useContext(ContextDatas);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const [confirmationState,setConfirmationState]=useState(false)
@@ -34,10 +34,22 @@ export default function Storage() {
     pageIndex:0,
     pageSize:10
   })
+  const [params,setParams] =useState({
+          
+          page:"",
+          limit:""
+        })
+   
+        useEffect(() => {
+              setParams((prev) => ({
+                ...prev,
+                search: search,
+              }));
+            }, [search])
   const {mutation} = useCustomMutation();
   const { data: productlistdata} = useFetchData('product',fetchProduct);
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
-  const { data: storageItemlist} = useFetchData('storageitems',fetchStorageItems);
+  const { data: storageItemlist} = useFetchData('storageitems',fetchStorageItems,params);
   console.log("storageitem list",storageItemlist)
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -113,7 +125,6 @@ export default function Storage() {
       header: 'Storage',
       cell: ({ row }) => (row?.original?.storage?.name),
     },
-    
     {
       header: 'Action',
       cell: ({ row }) => {
@@ -151,8 +162,8 @@ export default function Storage() {
     try {
       mutation.mutate({
         method: "delete",
-        url: `${receivingsapi}/${deleteId}`,
-        key:'receiving',
+        url: `${storageItemsapi}/${deleteId}`,
+        key:'storageitems',
        
       });
     } catch (error) {
@@ -160,28 +171,28 @@ export default function Storage() {
     }
   }
   // console.log("selectData",selectData)
-  const handleSubmit = (values, actions) => {
-    console.log("id",values)
-    const payload =values?.id?values: [values] 
-    const apiurl = values?.id? `${receivingsapi}/${values.id}` : receivingsapi;
-    mutation.mutate({
-        method: values?.id? "put":"post",
-        url: apiurl,
-        values: payload,
-        key: "receiving",
-        next: () => {
-          handleClose(); 
-          actions.resetForm()
-          setdata(null)
-          actions.setSubmitting(false)
-        },
-    },
-      { onError: (error) => {
+  // const handleSubmit = (values, actions) => {
+  //   console.log("id",values)
+  //   const payload =values?.id?values: [values] 
+  //   const apiurl = values?.id? `${storageItemsapi}/${values.id}` : receivingsapi;
+  //   mutation.mutate({
+  //       method: values?.id? "put":"post",
+  //       url: apiurl,
+  //       values: payload,
+  //       key: "storageitems",
+  //       next: () => {
+  //         handleClose(); 
+  //         actions.resetForm()
+  //         setdata(null)
+  //         actions.setSubmitting(false)
+  //       },
+  //   },
+  //     { onError: (error) => {
         
-      actions.setSubmitting(false); 
-    },}
-  );
-  };
+  //     actions.setSubmitting(false); 
+  //   },}
+  // );
+  // };
   return (
     <>
        (
@@ -411,7 +422,7 @@ export default function Storage() {
         open={confirmationState}
         onOpenChange={setConfirmationState}
         title="Confirm Deletion"
-        message="Are you sure you want to delete this Recieving?"
+        message="Are you sure you want to delete this storage?"
         onConfirm={handleDelete}
         onCancel={setConfirmationState}
       />

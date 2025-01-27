@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { ContextDatas } from "../services/Context";
 
 function Header() {
-  const { mobileSide, setmobileSide , setuser} = useContext(ContextDatas);
+  const { mobileSide, setmobileSide , setuser,setSearch ,search} = useContext(ContextDatas);
   const signOutHandler=()=>{
     localStorage.removeItem("token")
     setuser("")
@@ -49,6 +49,8 @@ function Header() {
                   type="search"
                   placeholder="Search..."
                   aria-label="Search"
+                  value={search}
+                  onChange={(e)=>setSearch(e.target.value)}
                 />
               </form>
             </li>

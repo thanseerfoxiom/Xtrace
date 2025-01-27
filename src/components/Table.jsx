@@ -2,15 +2,31 @@ import React from 'react'
 import { useReactTable, getCoreRowModel, flexRender, getPaginationRowModel } from '@tanstack/react-table';
 import Pagination from './Pagination';
 
-export default function Table({data,columns,pagination,setPagination}) {
+export default function Table({data, columns, pagination, onPageChange, onPageSizeChange}) {
   const table = useReactTable({
-    data: data,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    pageCount: pagination.totalPages,
+    state: {
+      pagination: {
+        pageIndex: pagination.pageIndex,
+        pageSize: pagination.pageSize
+      }
+    },
+    onPaginationChange: (updater) => {
+      const newPagination = typeof updater === 'function' 
+        ? updater({ pageIndex: pagination.pageIndex, pageSize: pagination.pageSize }) 
+        : updater;
+      
+      if (newPagination.pageSize !== pagination.pageSize) {
+        onPageSizeChange(newPagination.pageSize);
+      } else {
+        onPageChange(newPagination.pageIndex);
+      }
+    },
     getPaginationRowModel: getPaginationRowModel(),
-    state:{pagination},
-    onPaginationChange:setPagination,
-    pageCount:Math.ceil(data?.length/pagination?.pageSize)
   });
   return (<>
     <div className=" mt-1 p-2 table-responsive">
@@ -39,7 +55,7 @@ export default function Table({data,columns,pagination,setPagination}) {
                   return (
                     <td
                       key={cell?.id}
-                      className={`px-[20px] pt-[23px] pb-[24px] border-b truncate  text-sm font-medium ${
+                      className={`px-[20px] pt-[23px] pb-[24px] border-b truncate  text-sm font-medium  ${
                         index === row?.getVisibleCells()?.length - 1 ? '' : 'border-r'
                       } ${isTruncated ? 'truncate' : ''}`}
 
@@ -64,7 +80,14 @@ export default function Table({data,columns,pagination,setPagination}) {
         </tbody>
       </table>
                         </div>
-                        {pagination?  <Pagination table={table}   />:null}
+                        <Pagination
+        table={table}
+        totalItems={pagination?.totalItems??0}
+        totalPages={pagination?.totalPages??0}
+        hasNext={pagination?.hasNext}
+        hasPrevious={pagination?.hasPrevious}
+        currentPage={pagination?.pageIndex + 1}
+      />
                            
                             </>
   )

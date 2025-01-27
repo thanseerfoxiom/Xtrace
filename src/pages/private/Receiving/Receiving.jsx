@@ -20,10 +20,12 @@ import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { DatabaseBackup,ArchiveRestore, Trash2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Papa from "papaparse";
+import BasicSelect from '../../../components/BasicSelect.jsx';
+import BasicInput from '../../../components/BasicInput.jsx';
 
 export default function Receiving() {
   const [pageLoading, setpageLoading] = useState(true);
-  const { mobileSide } = useContext(ContextDatas);
+  const { mobileSide,search } = useContext(ContextDatas);
   const [show, setShow] = useState(false);
   const [storageshow, setStorageShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -35,10 +37,29 @@ export default function Receiving() {
     pageIndex:0,
     pageSize:10
   })
+  const [params,setParams] =useState({
+        startDate:"",
+        endDate:"",
+        expiryStartDate:"",
+        expiryEndDate:"",
+        productId:"",
+        supplierId:"",
+        search:search,
+        isStored:"",
+        page:"",
+        limit:""
+      })
+ 
+      useEffect(() => {
+            setParams((prev) => ({
+              ...prev,
+              search: search,
+            }));
+          }, [search])
   const {mutation} = useCustomMutation();
   const { data: productlistdata} = useFetchData('product',fetchProduct);
   const { data: restuarantlist} = useFetchData('restuarant',fetchRestuarent);
-  const { data: receivinglist} = useFetchData('receiving',fetchReceiving);
+  const { data: receivinglist} = useFetchData('receiving',fetchReceiving,params);
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
   const { data: storagelist} = useFetchData('storages',fetchStorages);
   
@@ -195,7 +216,7 @@ export default function Receiving() {
         return (
           row.original?.storagedItem?
           <ul className="d-flex justify-content-center">
-          <li><p>{row.original.storagedItem?.storage.name}</p></li>
+          <li><p>Moved to {row.original.storagedItem?.storage.name}</p></li>
         </ul>
           :
           
@@ -304,7 +325,7 @@ export default function Receiving() {
         <div className={`contents ${mobileSide ? 'expanded' : ''}`}>
           <div className="demo2 mb-25 t-thead-bg">
             <div className="container-fluid">
-              <div className="row mt-50">
+              <div className="row mt-20">
                 <div className="col-xxl-12 mb-25">
                   <div className="card border-0 px-25">
                     <div className="card-header px-0 border-0">
@@ -384,6 +405,74 @@ export default function Receiving() {
            
                       
                     </div>
+                   
+                      
+                               <div className='row'>
+                                <div className='col-6 col-md-3'>
+                                <BasicSelect
+        label="Choose Supplier"
+        name="supplierId"
+        variant="border" 
+        options={supplierOption}
+        value={params.supplierId}
+        onChange={(selectedOption)=>{
+          setParams((prev) => ({
+            ...prev,
+            supplierId: selectedOption?.value??"",
+          }));
+          }}
+        placeholder="Select supplier..."
+      />
+        </div>
+        <div className='col-6 col-md-3'>
+        <BasicSelect
+        label="Choose Product"
+        name="productId"
+        variant="border" 
+        options={productlistdataOption}
+        value={params.productId}
+        onChange={(selectedOption)=>{
+          setParams((prev) => ({
+            ...prev,
+            productId: selectedOption?.value??"",
+          }));
+           
+          }}
+        placeholder="Select product..."
+      />
+                                </div>
+                                <div className='col-6 col-md-3'>
+                                <BasicInput
+                                label="Expiry Start Date"
+                                value={params.expiryStartDate}
+                                onChange={(e) => {
+                                  
+                                  setParams((prev)=>({
+                                    ...prev,
+                                    expiryStartDate:e
+                                  }))
+                                }}
+                                className="mb-3"
+                                type='date'
+                                
+                                />
+                                </div>
+                                <div className='col-6 col-md-3'>
+                                <BasicInput
+                                label="Expiry End Date"
+                                value={params?.expiryEndDate}
+                                onChange={(e) => {
+                                  setParams((prev)=>({
+                                    ...prev,
+                                    expiryEndDate:e
+                                  }))
+                                }}
+                                className="mb-3"
+                                type='date'
+                                
+                                />
+                                </div>
+                               </div>
                     <div className="card-body p-0">
                       <div className="tab-content">
                         <div
@@ -392,10 +481,9 @@ export default function Receiving() {
                           role="tabpanel"
                           aria-labelledby="t_selling-today222-tab"
                         >
-                          <Table data={receivinglist?.data?.docs??[]} columns={columns} pagination={pagination}
+                          <Table data={receivinglist?.data?.docs??[]} columns={columns} 
                           // setPagination={setPagination}
-                          />
-                          
+                          />   
                         </div>
                       </div>
                     </div>

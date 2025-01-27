@@ -17,7 +17,7 @@ import Papa from "papaparse";
 
 export default function Products() {
   const [pageLoading, setpageLoading] = useState(true);
-  const { mobileSide } = useContext(ContextDatas);
+  const { mobileSide,search } = useContext(ContextDatas);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const [selectData,setselectData] =useState('')
@@ -25,11 +25,23 @@ export default function Products() {
   const [deleteId,setDeleteId]=useState(null)
   const [pagination,setPagination] =useState({
     pageIndex:0,
-    pageSize:10
+    pageSize:1
   })
+  const [params,setParams] =useState({
+            
+    page:0,
+    limit:1
+  })
+
+  useEffect(() => {
+        setParams((prev) => ({
+          ...prev,
+          search: search,
+        }));
+      }, [search])
   const {mutation} = useCustomMutation();
   // console.log("selectData",selectData)
-  const { data: productlistdata} = useFetchData('product',fetchProduct);
+  const { data: productlistdata} = useFetchData('product',fetchProduct,params);
   console.log("productlist",productlistdata?.data?.docs)
 
 
@@ -65,8 +77,32 @@ export default function Products() {
         cell: (info) => <strong>{info.getValue()}</strong>,
       },
       {
-        header: 'Unit of measure',
-        accessorKey: 'uom',
+        header: 'Image',
+        accessorKey: 'image',
+        cell:({row})=>(
+          row.original?.image?
+        <img
+          src={row.original?.image}
+          alt="PDF Icon"
+          style={{
+            width: '80px',
+            height: '80px',
+            marginBottom: '5px',
+          }}
+        />:"")
+        //   {
+        //   console.log("row.original?.image",row.original?.image)
+        //   return         
+        //   <img
+        //   src={row.original?.image}
+        //   alt="PDF Icon"
+        //   style={{
+        //     // width: '80px',
+        //     // height: '80px',
+        //     marginBottom: '5px',
+        //   }}
+        // />
+        // }
       },
       {
         header: 'Description',
@@ -138,7 +174,7 @@ export default function Products() {
         <div className={`contents ${mobileSide ? 'expanded' : ''}`}>
           <div className="demo2 mb-25 t-thead-bg">
             <div className="container-fluid">
-              <div className="row mt-50">
+              <div className="row mt-20">
                 <div className="col-xxl-12 mb-25">
                   <div className="card border-0 px-25">
                     <div className="card-header px-0 border-0">
@@ -204,7 +240,7 @@ export default function Products() {
                           role="tabpanel"
                           aria-labelledby="t_selling-today222-tab"
                         >
-                          <Table data={productlistdata?.data?.docs??[]} columns={columns} pagination={pagination}
+                          <Table data={productlistdata?.data?.docs??[]} pagination={productlistdata?.data?.metadata} columns={columns} params={params}
                            //setPagination={setPagination}
                            />
                           
@@ -222,7 +258,7 @@ export default function Products() {
   <Formik
     initialValues={{
       name: selectData?.name || "",
-      uom: selectData?.uom || "",
+      image: selectData?.image || "",
       description: selectData?.description || "",
       ...(selectData?.id ? { id: selectData.id } : {}),
     }}
@@ -240,7 +276,7 @@ export default function Products() {
       <Form onSubmit={handleSubmit}>
         <Row>
           <FormikField name="name" label="Name" placeholder="Enter name..." colWidth={12} />
-          <FormikField name="uom" label="Unit of measure" placeholder="Enter unit..." colWidth={12} />
+          <FormikField name="image" label="Image url" placeholder="Enter image url..." colWidth={12} />
           <FormikField name="description" type="textarea" label="Description" placeholder="Enter description..." colWidth={12} />
         </Row>
         <Modal.Footer>

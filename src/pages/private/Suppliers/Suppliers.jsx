@@ -20,7 +20,7 @@ import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import Papa from "papaparse";
 export default function Suppliers() {
   const [pageLoading, setpageLoading] = useState(true);
-  const { mobileSide } = useContext(ContextDatas);
+  const { mobileSide ,search} = useContext(ContextDatas);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const [confirmationState,setConfirmationState]=useState(false)
@@ -30,8 +30,20 @@ export default function Suppliers() {
     pageIndex:0,
     pageSize:10
   })
+  const [params,setParams] =useState({
+              search:"",
+              page:"",
+              limit:""
+            })
+       
+            // useEffect(() => {
+            //       setParams((prev) => ({
+            //         ...prev,
+            //         search: search,
+            //       }));
+            //     }, [search])
   const {mutation} = useCustomMutation();
-  const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
+  const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers,params);
   console.log("padataa",supplierslist?.data?.docs)
 
 

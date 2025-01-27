@@ -103,6 +103,7 @@ const SingleSelect = ({
   };
 
   const handleChange = (option) => {
+    
     if (option === null) {
       // Handle clearing the selection
       setValue("");

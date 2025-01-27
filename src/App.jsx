@@ -14,6 +14,7 @@ import {
   settingsPath,
   StoragesPath,
   SuppliersPath,
+  ThermometerPath,
 } from "./services/UrlPaths";
 
 import SettingsManagement from "./pages/private/Settings/SettingsManagement";
@@ -25,6 +26,7 @@ import Receiving from "./pages/private/Receiving/Receiving";
 import Storage from "./pages/private/Storage/storage"
 import Recepies from "./pages/private/Menu/Recepies";
 import Dishes from "./pages/private/Menu/Dishes";
+import Thermometers from "./pages/private/Restaurant/Thermometers";
 
 
 
@@ -69,9 +71,15 @@ function App() {
             path={basePath + DishesPath}
             element={<Dishes />}
           />
+          
           <Route
-            path={basePath + ReceipePath}
+            path={`${basePath+ReceipePath}/:id`}
             element={<Recepies />}
+          />
+       
+          <Route
+            path={`${basePath+ThermometerPath}/:id`}
+            element={<Thermometers />}
           />
        
           

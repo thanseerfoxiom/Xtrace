@@ -7,6 +7,7 @@ const Context = ({ children }) => {
   const [mobileSide, setmobileSide] = useState(false);
   const [pageLoading, setpageLoading] = useState(true);
   const [user, setuser] = useState(localStorage.getItem("token"))
+  const [search,setSearch]=useState('')
 
   return (
     <ContextDatas.Provider
@@ -16,7 +17,8 @@ const Context = ({ children }) => {
         urlPath,
         setUrlPath,
         pageLoading, setpageLoading,
-        user, setuser
+        user, setuser,
+        search,setSearch
       }}
     >
       {children}
