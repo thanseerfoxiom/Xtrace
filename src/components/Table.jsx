@@ -2,31 +2,25 @@ import React from 'react'
 import { useReactTable, getCoreRowModel, flexRender, getPaginationRowModel } from '@tanstack/react-table';
 import Pagination from './Pagination';
 
-export default function Table({data, columns, pagination, onPageChange, onPageSizeChange}) {
+export default function Table({data, columns, pagination,setParams}) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    pageCount: pagination.totalPages,
+    pageCount: pagination?.totalPages??1,
     state: {
       pagination: {
-        pageIndex: pagination.pageIndex,
-        pageSize: pagination.pageSize
+        pageIndex: pagination?.page??1,
+        pageSize: pagination?.limit??10
       }
     },
-    onPaginationChange: (updater) => {
-      const newPagination = typeof updater === 'function' 
-        ? updater({ pageIndex: pagination.pageIndex, pageSize: pagination.pageSize }) 
-        : updater;
-      
-      if (newPagination.pageSize !== pagination.pageSize) {
-        onPageSizeChange(newPagination.pageSize);
-      } else {
-        onPageChange(newPagination.pageIndex);
-      }
-    },
-    getPaginationRowModel: getPaginationRowModel(),
+    // onPaginationChange: (updater) => {
+    //   setparams(prev => ({
+    //     ...prev,
+    //     ...updater(),
+    //   }));
+    // },
   });
   return (<>
     <div className=" mt-1 p-2 table-responsive">
@@ -80,14 +74,12 @@ export default function Table({data, columns, pagination, onPageChange, onPageSi
         </tbody>
       </table>
                         </div>
-                        <Pagination
-        table={table}
-        totalItems={pagination?.totalItems??0}
-        totalPages={pagination?.totalPages??0}
-        hasNext={pagination?.hasNext}
-        hasPrevious={pagination?.hasPrevious}
-        currentPage={pagination?.pageIndex + 1}
+                        {pagination?
+                        <Pagination 
+        pagination={pagination} 
+        setPagination={setParams} 
       />
+      :""}
                            
                             </>
   )

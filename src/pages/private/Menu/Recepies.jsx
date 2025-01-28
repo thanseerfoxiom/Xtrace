@@ -10,13 +10,14 @@ import { Form, Button, Row } from 'react-bootstrap';
 import { fetchProduct, fetchrecepieItems } from '../../../api/index.js';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import Commonmodal from '../../../components/modals/Commonmodal.jsx';
-import { recipesapi } from '../../../services/BaseUrls.jsx';
+import { dishesapi, recipesapi } from '../../../services/BaseUrls.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { Pencil, Trash2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Papa from "papaparse";
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import SingleSelect from '../../../components/ui/SingleSelect.jsx';
+import { DishesPath } from '../../../services/UrlPaths.jsx';
 
 
 export default function Recepies() {
@@ -27,10 +28,7 @@ export default function Recepies() {
   const [confirmationState,setConfirmationState]=useState(false)
   const [deleteId,setDeleteId]=useState(null)
   const [selectData,setselectData] =useState('')
-  const [pagination,setPagination] =useState({
-    pageIndex:0,
-    pageSize:10
-  })
+ const navigate = useNavigate();
   
   const { id } = useParams();
   const dishId = parseInt(id)
@@ -43,6 +41,7 @@ export default function Recepies() {
     page:"",
     limit:""
   })
+  console.log("passedParams",passedParams)
   const {mutation} = useCustomMutation();
   const {data:recepielistdata,
     error,
@@ -189,7 +188,26 @@ export default function Recepies() {
                 <div className="col-xxl-12 mb-25">
                   <div className="card border-0 px-25">
                     <div className="card-header px-0 border-0">
-                      <h6>Recepie</h6>
+                      
+                       
+                      <ul
+                          className="card-tab-links "
+                          role="tablist"
+                        >
+                          <li>
+                            <button
+                        
+                              onClick={() =>navigate(`/${DishesPath}`,{ state: { params: passedParams} })}
+                              type="button"
+                              className="border-0"
+                              size='sm'
+                              
+                            > <h2>⬅</h2>
+                            </button>
+                          </li>
+                          <li><h6 className=''>Recepie</h6></li>
+                        </ul>
+                      
                       <div className="card-extra">
                         <ul
                           className="card-tab-links nav-tabs nav"

@@ -17,7 +17,7 @@ import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.js
 import { restaurantsapi } from '../../../services/BaseUrls.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { Pencil, Trash2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ThermometerPath } from '../../../services/UrlPaths.jsx';
 export default function Restaurant() {
   const [pageLoading, setpageLoading] = useState(true);
@@ -27,24 +27,24 @@ export default function Restaurant() {
   const [confirmationState,setConfirmationState]=useState(false)
   const [deleteId,setDeleteId]=useState(null)
   const [selectData,setselectData] =useState('')
-  const [pagination,setPagination] =useState({
-    pageIndex:0,
-    pageSize:10
-  })
+
   const navigate = useNavigate();
   const {mutation} = useCustomMutation();
-  const [params,setParams] =useState({
+   const location = useLocation();
+    const backedParams = location.state?.params; 
+  const [params,setParams] =useState(backedParams??{
             
-            page:"",
-            limit:""
+            page:1,
+            limit:10,
+            search:""
           })
      
-          // useEffect(() => {
-          //       setParams((prev) => ({
-          //         ...prev,
-          //         search: search,
-          //       }));
-          //     }, [search])
+          useEffect(() => {
+                setParams((prev) => ({
+                  ...prev,
+                  search: search,
+                }));
+              }, [search])
   const { data: restuarantlist} = useFetchData('restuarant',fetchRestuarent,params);
   // useEffect(() => {
   //   const timer = setTimeout(() => {
@@ -53,7 +53,6 @@ export default function Restaurant() {
 
   //   return () => clearTimeout(timer);
   // }, []);
-
 
   const [productImagePreview, setProductImagePreview] = useState(null);
 
@@ -128,7 +127,7 @@ export default function Restaurant() {
         );
       },
     },
-  ], []);
+  ], [navigate, params]);
   const handleDeleteConfirmation = (deleteId) => {
     setConfirmationState(true);
     setDeleteId(deleteId);
@@ -214,7 +213,14 @@ export default function Restaurant() {
                           role="tabpanel"
                           aria-labelledby="t_selling-today222-tab"
                         >
-                          <Table data={restuarantlist?.data?.docs??[]} columns={columns} />
+                          <Table data={restuarantlist?.data?.docs??[]} columns={columns} setParams={setParams}
+                           pagination={{
+                            page: params.page,
+                            limit: params.limit,
+                            totalPages: restuarantlist?.data?.metadata.totalPages,
+                            hasNext: restuarantlist?.data?.metadata.hasNext,
+                            hasPrevious: restuarantlist?.data?.metadata.hasPrevious,
+                          }} />
                           
                         </div>
                       </div>

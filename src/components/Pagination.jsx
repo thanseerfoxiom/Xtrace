@@ -11,7 +11,7 @@
 //       <ul className="dm-pagination d-flex">
 //         <li className="dm-pagination__item">
 //           <button 
-//             onClick={() => table.setPageIndex(0)} 
+//             onClick={() => table.setpage(0)} 
 //             disabled={!table.getCanPreviousPage()} 
 //             className="dm-pagination__link pagination-control"
 //           >
@@ -21,18 +21,18 @@
 //             <a 
 //               key={index} 
 //               href="#" 
-//               className={`dm-pagination__link  ${table.getState().pagination.pageIndex === index ?  'active' : ''}`}
-//               hidden={Math.abs(table.getState().pagination.pageIndex - index) > 1 }
+//               className={`dm-pagination__link  ${table.getState().pagination.page === index ?  'active' : ''}`}
+//               hidden={Math.abs(table.getState().pagination.page - index) > 1 }
 //               onClick={(e) => {
 //                 e.preventDefault();
-//                 table.setPageIndex(index);
+//                 table.setpage(index);
 //               }}
 //             >
 //               <span className="page-number">{page + 1} </span>
 //             </a>
 //           ))}
 //           <button 
-//   onClick={() => table.setPageIndex(table.getPageCount() - 1)} 
+//   onClick={() => table.setpage(table.getPageCount() - 1)} 
 //   disabled={!table.getCanNextPage()} 
 //   className="dm-pagination__link pagination-control"
 // >
@@ -62,69 +62,97 @@
 
 // export default Pagination;
 
+import React from "react";
 
-function Pagination({ table, totalPages, hasNext, hasPrevious, currentPage, totalItems }) {
+function Pagination({ pagination, setPagination }) {
+  const { page, limit, totalPages, hasNext, hasPrevious } = pagination;
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage <= totalPages) {
+      setPagination(prev => ({
+        ...prev,
+        page: newPage,
+      }));
+    }
+  };
+
+  const handlePageSizeChange = (e) => {
+    const newSize = Number(e.target.value);
+    setPagination(prev => ({
+      ...prev,
+      limit: newSize,
+      page: 1, // Reset to first page
+    }));
+  };
+
   return (
     <nav className="dm-page mb-2 px-2 pb-2" style={{ float: "right" }}>
-      <ul className="dm-pagination d-flex">
+      <ul className="dm-pagination d-flex align-items-center">
         <li className="dm-pagination__item">
-          <button
-            onClick={() => table.setPageIndex(0)}
+          <button 
+            onClick={() => handlePageChange(0)} 
             disabled={!hasPrevious}
-            className="dm-pagination__link pagination-control"
+            className="dm-pagination__link pagination-control me-2"
           >
             <span className="la la-angle-double-left" />
+            
           </button>
-          <button
-            onClick={() => table.previousPage()}
+          <button 
+            onClick={() => handlePageChange(page - 1)} 
             disabled={!hasPrevious}
-            className="dm-pagination__link pagination-control"
+            className="dm-pagination__link pagination-control "
           >
             <span className="la la-angle-left" />
+            
           </button>
+        </li>
 
-          <span className="dm-pagination__link">
-            Page {currentPage} of {totalPages}
+        {/* Page Numbers */}
+        <li className="dm-pagination__item">
+          <span className="">
+            Page {page } of {totalPages}
           </span>
+        </li>
 
-          <button
-            onClick={() => table.nextPage()}
+        <li className="dm-pagination__item">
+          <button 
+            onClick={() => handlePageChange(page + 1)} 
             disabled={!hasNext}
-            className="dm-pagination__link pagination-control"
+            className="dm-pagination__link pagination-control "
           >
+            
             <span className="la la-angle-right" />
           </button>
-          <button
-            onClick={() => table.setPageIndex(totalPages - 1)}
+          <button 
+            onClick={() => handlePageChange(totalPages )} 
             disabled={!hasNext}
             className="dm-pagination__link pagination-control"
           >
+            
             <span className="la la-angle-double-right" />
           </button>
         </li>
-        <li className="dm-pagination__item">
+
+        {/* Page Size Selector */}
+        <li className="dm-pagination__item ">
           <div className="paging-option">
-            <select
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
+            <select 
+              name="page-size" 
+              className="page-selection form-select"
+              value={limit}
+              onChange={handlePageSizeChange}
             >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
+              {[1,10, 20, 30, 40, 50].map(size => (
+                <option key={size} value={size}>
+                  {size}/page
                 </option>
               ))}
             </select>
           </div>
         </li>
-        <li className="dm-pagination__item">
-          <span className="text-muted ms-2">
-            Total {totalItems} items
-          </span>
-        </li>
       </ul>
     </nav>
   );
 }
+
 export default Pagination;

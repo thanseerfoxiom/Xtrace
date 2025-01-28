@@ -30,14 +30,11 @@ export default function Storage() {
   const [confirmationState,setConfirmationState]=useState(false)
   const [deleteId,setDeleteId]=useState(null)
   const [selectData,setselectData] =useState('')
-  const [pagination,setPagination] =useState({
-    pageIndex:0,
-    pageSize:10
-  })
+ 
   const [params,setParams] =useState({
           
-          page:"",
-          limit:""
+          page:1,
+          limit:10
         })
    
         useEffect(() => {
@@ -287,7 +284,14 @@ export default function Storage() {
                           role="tabpanel"
                           aria-labelledby="t_selling-today222-tab"
                         >
-                          <Table data={storageItemlist?.data?.docs??[]} columns={columns} pagination={pagination}
+                          <Table data={storageItemlist?.data?.docs??[]} columns={columns} setParams={setParams}
+                           pagination={{
+                            page: params.page,
+                            limit: params.limit,
+                            totalPages: storageItemlist?.data?.metadata.totalPages,
+                            hasNext: storageItemlist?.data?.metadata.hasNext,
+                            hasPrevious: storageItemlist?.data?.metadata.hasPrevious,
+                          }}
                           // setPagination={setPagination}
                           />
                           

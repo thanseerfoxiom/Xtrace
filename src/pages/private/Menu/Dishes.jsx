@@ -17,7 +17,7 @@ import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { Eye, Trash2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Papa from "papaparse";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ReceipePath } from '../../../services/UrlPaths.jsx';
 
 
@@ -29,14 +29,12 @@ export default function Dishes() {
   const [confirmationState,setConfirmationState]=useState(false)
   const [deleteId,setDeleteId]=useState(null)
   const [selectData,setselectData] =useState('')
-  const [pagination,setPagination] =useState({
-    pageIndex:0,
-    pageSize:10
-  })
-  const [params,setParams] =useState({
+  const location = useLocation();
+  const backedParams = location.state?.params; 
+  const [params,setParams] =useState(backedParams??{
       search:search,
-      page:"",
-      limit:""
+      page:1,
+      limit:10
     })
 
     useEffect(() => {
@@ -45,7 +43,6 @@ export default function Dishes() {
             search: search,
           }));
         }, [search])
-
   const {mutation} = useCustomMutation();
   const { data: disheslistdata} = useFetchData('dishes',fetchdishesItems,params);
   let navigate = useNavigate();
@@ -109,7 +106,7 @@ export default function Dishes() {
   type="button"
   className=""
   size='sm'
-  onClick={() =>navigate(`/${ReceipePath}/${row?.original?.id}`,{ state: { params: 1} })}
+  onClick={() =>navigate(`/${ReceipePath}/${row?.original?.id}`,{ state: { params: params} })}
 >
   Recepie
 </Button>
@@ -146,7 +143,7 @@ export default function Dishes() {
         );
       },
     },
-  ], []);
+  ], [navigate, params]);
   const handleDeleteConfirmation = (deleteId) => {
     setConfirmationState(true);
     setDeleteId(deleteId);
@@ -190,7 +187,7 @@ export default function Dishes() {
   );
   
   };
-  console.log("disheslistdatadisheslistdata",disheslistdata)
+
   return (
     <>
        (
@@ -237,7 +234,14 @@ export default function Dishes() {
                           role="tabpanel"
                           aria-labelledby="t_selling-today222-tab"
                         >
-                          <Table data={disheslistdata?.data?.docs??[]} columns={columns} 
+                          <Table data={disheslistdata?.data?.docs??[]} columns={columns} setParams={setParams}
+                           pagination={{
+                            page: params.page,
+                            limit: params.limit,
+                            totalPages: disheslistdata?.data?.metadata.totalPages,
+                            hasNext: disheslistdata?.data?.metadata.hasNext,
+                            hasPrevious: disheslistdata?.data?.metadata.hasPrevious,
+                          }}
                           // setPagination={setPagination}
                           />
                           

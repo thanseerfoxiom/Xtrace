@@ -33,10 +33,7 @@ export default function Receiving() {
   const [confirmationState,setConfirmationState]=useState(false)
   const [deleteId,setDeleteId]=useState(null)
   const [selectData,setselectData] =useState('')
-  const [pagination,setPagination] =useState({
-    pageIndex:0,
-    pageSize:10
-  })
+ 
   const [params,setParams] =useState({
         startDate:"",
         endDate:"",
@@ -46,8 +43,8 @@ export default function Receiving() {
         supplierId:"",
         search:search,
         isStored:"",
-        page:"",
-        limit:""
+        page:1,
+        limit:10
       })
  
       useEffect(() => {
@@ -481,7 +478,14 @@ export default function Receiving() {
                           role="tabpanel"
                           aria-labelledby="t_selling-today222-tab"
                         >
-                          <Table data={receivinglist?.data?.docs??[]} columns={columns} 
+                          <Table data={receivinglist?.data?.docs??[]} columns={columns} setParams={setParams}
+                           pagination={{
+                            page: params.page,
+                            limit: params.limit,
+                            totalPages: receivinglist?.data?.metadata.totalPages,
+                            hasNext: receivinglist?.data?.metadata.hasNext,
+                            hasPrevious: receivinglist?.data?.metadata.hasPrevious,
+                          }}
                           // setPagination={setPagination}
                           />   
                         </div>

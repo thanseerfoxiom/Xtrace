@@ -7,17 +7,17 @@ import {useFetchData} from '../../../services/useQueryFetchData.js'
 import Table from '../../../components/Table.jsx';
 import { Formik } from 'formik';
 import { Form, Button, Row } from 'react-bootstrap';
-import { fetchProduct, fetchrecepieItems, fetchthermometersItems } from '../../../api/index.js';
+import {fetchthermometersItems } from '../../../api/index.js';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import Commonmodal from '../../../components/modals/Commonmodal.jsx';
-import { recipesapi, thermometersapi } from '../../../services/BaseUrls.jsx';
+import {thermometersapi } from '../../../services/BaseUrls.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { Pencil, Trash2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Papa from "papaparse";
-import { useLocation, useParams } from 'react-router-dom';
-import SingleSelect from '../../../components/ui/SingleSelect.jsx';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import FormikField from '../../../components/InputComponents.jsx';
+import { RestuarantPath } from '../../../services/UrlPaths.jsx';
 
 
 export default function Thermometers() {
@@ -32,7 +32,7 @@ export default function Thermometers() {
     pageIndex:0,
     pageSize:10
   })
-  
+  const navigate = useNavigate();
   const { id } = useParams();
   const kitchenId = parseInt(id)
   const location = useLocation();
@@ -56,14 +56,13 @@ export default function Thermometers() {
     error,
     loading,
     refetch: refetchthermometerList,} = useFetchData('thermometer',fetchthermometersItems,params)
-    console.log("thermometerList",thermometerList)
 
-    // useEffect(() => {
-    //   setParams((prev) => ({
-    //     ...prev,
-    //     search: search,
-    //   }));
-    // }, [search])
+    useEffect(() => {
+      setParams((prev) => ({
+        ...prev,
+        search: search,
+      }));
+    }, [search])
     
 
   const handleFileUpload = (e) => {
@@ -197,7 +196,24 @@ export default function Thermometers() {
                 <div className="col-xxl-12 mb-25">
                   <div className="card border-0 px-25">
                     <div className="card-header px-0 border-0">
-                      <h6>Thermometers</h6>
+                      <ul
+                                                className="card-tab-links "
+                                                role="tablist"
+                                              >
+                                                <li>
+                                                  <button
+                                              
+                                                    onClick={() =>navigate(`/${RestuarantPath}`,{ state: { params: passedParams} })}
+                                                    type="button"
+                                                    className="border-0"
+                                                    size='sm'
+                                                    
+                                                  > <h2>⬅</h2>
+                                                  </button>
+                                                </li>
+                                                <li><h6 className=''>Thermometers</h6></li>
+                                              </ul>
+                      
                       <div className="card-extra">
                         <ul
                           className="card-tab-links nav-tabs nav"

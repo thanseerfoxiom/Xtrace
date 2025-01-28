@@ -23,13 +23,10 @@ export default function Products() {
   const [selectData,setselectData] =useState('')
   const [confirmationState,setConfirmationState]=useState(false)
   const [deleteId,setDeleteId]=useState(null)
-  const [pagination,setPagination] =useState({
-    pageIndex:0,
-    pageSize:1
-  })
+  
   const [params,setParams] =useState({
             
-    page:0,
+    page:1,
     limit:1
   })
 
@@ -168,6 +165,7 @@ export default function Products() {
     },}
   );
   };
+  console.log(";;;;;;;;;;;;;;;;;",productlistdata?.data?.metadata)
   return (
     <>
        (
@@ -240,8 +238,14 @@ export default function Products() {
                           role="tabpanel"
                           aria-labelledby="t_selling-today222-tab"
                         >
-                          <Table data={productlistdata?.data?.docs??[]} pagination={productlistdata?.data?.metadata} columns={columns} params={params}
-                           //setPagination={setPagination}
+                          <Table data={productlistdata?.data?.docs??[]} columns={columns} setParams={setParams}
+                           pagination={{
+                            page: params.page,
+                            limit: params.limit,
+                            totalPages: productlistdata?.data?.metadata.totalPages,
+                            hasNext: productlistdata?.data?.metadata.hasNext,
+                            hasPrevious: productlistdata?.data?.metadata.hasPrevious,
+                          }}
                            />
                           
                         </div>
