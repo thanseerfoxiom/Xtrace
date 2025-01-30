@@ -27,7 +27,7 @@ export default function Products() {
   const [params,setParams] =useState({
             
     page:1,
-    limit:1
+    limit:10
   })
 
   useEffect(() => {
