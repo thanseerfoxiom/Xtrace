@@ -91,18 +91,17 @@ function Header() {
                           <a href>
                             <i className="uil uil-user" /> Profile
                           </a>
-                        </li>
-                        <li>
-                          <a href>
-                            <i className="uil uil-setting" />
-                            Settings
-                          </a>
                         </li> */}
-                       
-                      </ul>
-                      <a href onClick={()=>signOutHandler()} className="nav-author__signout cursor-true">
+                        <li>
+                        <a href onClick={()=>signOutHandler()} className="nav-author__signout cursor-true ">
                         <i className="uil uil-sign-out-alt" /> Sign Out
                       </a>
+                        </li>
+                       
+                      </ul>
+                      {/* <a href onClick={()=>signOutHandler()} className="nav-author__signout cursor-true ">
+                        <i className="uil uil-sign-out-alt" /> Sign Out
+                      </a> */}
                     </div>
                   </div>
                 </div>

@@ -142,7 +142,7 @@ function Pagination({ pagination, setPagination }) {
               value={limit}
               onChange={handlePageSizeChange}
             >
-              {[1,10, 20, 30, 40, 50].map(size => (
+              {[10, 20, 30, 40, 50].map(size => (
                 <option key={size} value={size}>
                   {size}/page
                 </option>
