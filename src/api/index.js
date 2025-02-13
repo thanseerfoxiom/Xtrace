@@ -82,3 +82,12 @@ export const fetchthermometersItems = async(params)=> {
         return []
          }
 }
+export const fetchReceivingproductItem = async(receivigId)=> {
+    const response = await ApiCall("GET",`${receivingsapi}/${receivigId}`,null);
+    if(response?.status){
+        return response.message
+         }
+        else {
+        return []
+         }
+}

@@ -88,7 +88,7 @@ export default function Dishes() {
       accessorKey: 'name',
     },
     {
-      header: 'Recepie',
+      header: 'Ingredients',
       accessorKey: 'recepie',
       cell:({row})=> {
         // Define functions inside the cell property
@@ -108,7 +108,7 @@ export default function Dishes() {
   size='sm'
   onClick={() =>navigate(`/${ReceipePath}/${row?.original?.id}`,{ state: { params: params} })}
 >
-  Recepie
+Ingredients
 </Button>
                 
                 {/* <Trash2 className="wh-20 flex-shrink-0 cursor-pointer" /> */}

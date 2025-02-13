@@ -18,6 +18,7 @@ import Papa from "papaparse";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import SingleSelect from '../../../components/ui/SingleSelect.jsx';
 import { DishesPath } from '../../../services/UrlPaths.jsx';
+import FormikField from '../../../components/InputComponents.jsx';
 
 
 export default function Recepies() {
@@ -41,7 +42,7 @@ export default function Recepies() {
     page:"",
     limit:""
   })
-  console.log("passedParams",passedParams)
+  // console.log("passedParams",passedParams)
   const {mutation} = useCustomMutation();
   const {data:recepielistdata,
     error,
@@ -108,6 +109,11 @@ export default function Recepies() {
       header: 'Product',
       accessorKey: 'product',
       cell:({row})=>row.original?.product?.name
+    },
+    {
+      header: 'Quantity',
+      accessorKey: 'quantity',
+      // cell:({row})=>row.original?.product?.name
     },
     
    
@@ -205,7 +211,7 @@ export default function Recepies() {
                             > <h2>⬅</h2>
                             </button>
                           </li>
-                          <li><h6 className=''>Recepie</h6></li>
+                          <li><h6 className=''>Ingredients</h6></li>
                         </ul>
                       
                       <div className="card-extra">
@@ -254,10 +260,11 @@ export default function Recepies() {
               </div>
             </div>
           </div>
-          <Commonmodal show={show} handleClose={handleClose} title={"Recepie"}>
+          <Commonmodal show={show} handleClose={handleClose} title={"Ingredient"}>
   <Formik
     initialValues={{
       productId: selectData?.productId || "",
+      quantity: selectData?.quantity || "",
       dishId:dishId,
       ...(selectData?.id ? { id: selectData.id } : {}),
       
@@ -288,14 +295,15 @@ export default function Recepies() {
             options={productlistdataOption||[]}
             // options={pricedataOption.filter(option => option.value !== 1) || []}
             variant="border" 
-          />   
+          /> 
+          <FormikField name="quantity" type="number" label="quantity" placeholder="Enter  quantity..." colWidth={12} />  
         </Row>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
           <Button variant="primary" type="submit" disabled={isSubmitting}>
-            Add Recepie
+            Add Ingredients
           </Button>
         </Modal.Footer>
       </Form>
@@ -307,7 +315,7 @@ export default function Recepies() {
         open={confirmationState}
         onOpenChange={setConfirmationState}
         title="Confirm Deletion"
-        message="Are you sure you want to delete this Dishe?"
+        message="Are you sure you want to delete this Ingredient?"
         onConfirm={handleDelete}
         onCancel={setConfirmationState}
       />

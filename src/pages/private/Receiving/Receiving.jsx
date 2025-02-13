@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ContextDatas } from '../../../services/Context.jsx';
 import Loader from '../../../components/Loader.jsx';
 // import Pagination from '../../../components/Pagination';
@@ -22,7 +22,10 @@ import { format, parseISO } from 'date-fns';
 import Papa from "papaparse";
 import BasicSelect from '../../../components/BasicSelect.jsx';
 import BasicInput from '../../../components/BasicInput.jsx';
-
+import { DetailsPath } from '../../../services/UrlPaths.jsx';
+import { useReactToPrint } from "react-to-print";
+import Barcode from 'react-barcode';
+import PrintBarcode from '../../../utils/PrintQr.jsx';
 export default function Receiving() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide,search } = useContext(ContextDatas);
@@ -60,6 +63,30 @@ export default function Receiving() {
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
   const { data: storagelist} = useFetchData('storages',fetchStorages);
   
+   // --- Barcode printing setup ---
+   const [selectedBarcode, setSelectedBarcode] = useState('');
+   const [selectedBarcodeLabel, setSelectedBarcodeLabel] = useState('');
+   const barcodePrintRef = useRef(null);
+   
+   const printBarcodee = useReactToPrint({
+     content: () => barcodePrintRef.current,
+     documentTitle: 'Barcode',
+     // You can add additional options here (e.g., remove margins via CSS for thermal printing)
+   });
+   
+   const handlePrintBarcode = (row) => {
+     const barcodeValue = row?.original?.id; // or any value you want to encode
+     const barcodeLabel = row?.original?.invoiceNo ? `Invoice: ${row.original.invoiceNo}` : `ID: ${barcodeValue}`;
+     setSelectedBarcode(barcodeValue);
+     setSelectedBarcodeLabel(barcodeLabel);
+     // Wait for state update before printing
+     
+     setTimeout(() => {
+      printBarcodee();
+     }, 100);
+   };
+   // --- End Barcode printing setup ---
+
   const handleExport = () => {
     // Access the raw data
     const rawData = receivinglist?.data?.docs;
@@ -234,6 +261,17 @@ export default function Receiving() {
       },
     },
     {
+      header: 'Barcode ',
+      accessorKey: 'vehicleNo',
+      cell:({row})=>{
+        return(
+          <div style={{ height: "auto", margin: "0 auto", maxWidth: "", width: "100%"  }} onClick={() => handlePrintBarcode(row)} >
+            <Barcode height={30} format='CODE128'  value={row?.original?.id} />
+          </div>
+        )
+      }
+    },
+    {
       header: 'Action',
       cell: ({ row }) => {
         // Define functions inside the cell property
@@ -261,7 +299,7 @@ export default function Receiving() {
     setStorageShow(true);
     setselectData(selectedData);
   };
-  
+
   const handleDelete=()=>{
     try {
       mutation.mutate({
@@ -700,6 +738,10 @@ export default function Receiving() {
     )}}
   </Formik>
       </Commonmodal>
+      {/* Hidden container for barcode printing */}
+      <div ref={barcodePrintRef} className="">
+  <PrintBarcode  value={selectedBarcode} label={selectedBarcodeLabel} />
+</div>
         </div>
       )
     </>

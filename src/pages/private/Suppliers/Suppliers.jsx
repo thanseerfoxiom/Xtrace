@@ -11,13 +11,15 @@ import Table from '../../../components/Table';
 import FormikField from '../../../components/InputComponents.jsx';
 import { Formik } from 'formik';
 import { Form, Button, Row } from 'react-bootstrap';
-import {fetchSuppliers } from '../../../api/index.js';
+import {fetchProduct, fetchSuppliers } from '../../../api/index.js';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import Commonmodal from '../../../components/modals/Commonmodal.jsx';
 import { suppliersapi } from '../../../services/BaseUrls.jsx';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import Papa from "papaparse";
+import SingleSelect from '../../../components/ui/SingleSelect.jsx';
+import MultiSelect from '../../../components/ui/MultiSelect.jsx';
 export default function Suppliers() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide ,search} = useContext(ContextDatas);
@@ -28,7 +30,7 @@ export default function Suppliers() {
   const [selectData,setselectData] =useState('')
 
   const [params,setParams] =useState({
-              search:"",
+              search:search,
               page:1,
               limit:10
             })
@@ -41,11 +43,15 @@ export default function Suppliers() {
             //     }, [search])
   const {mutation} = useCustomMutation();
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers,params);
+  const { data: productlistdata} = useFetchData('product',fetchProduct);
   console.log("padataa",supplierslist?.data?.docs)
 
 
   const [productImagePreview, setProductImagePreview] = useState(null);
-
+  const productlistdataOption = productlistdata?.data?.docs?.map(item => ({
+    label: item.name,
+    value: item.id
+  }));
 
   const handleExport = () => {
     const data = supplierslist?.data?.docs
@@ -68,6 +74,26 @@ export default function Suppliers() {
     {
       header: 'Phone',
       accessorKey: 'phone',
+    },
+   
+    {
+      header: 'Delivery Products ',
+      accessorKey: 'deliveryproducts',
+      cell: ({ row }) => {
+        const product = row?.original?.deliveryproducts;
+        if (Array.isArray(product)) {
+          const productNames = product
+            .map((item) => item?.productNames?.name)
+            .join(", ");
+          return natureNames || "";
+        }
+        return "";
+      },
+    },
+   
+    {
+      header: 'Risk',
+      accessorKey: 'risk',
     },
    
     {
@@ -113,6 +139,8 @@ export default function Suppliers() {
     }
   }
   const handleSubmit = (values, actions) => {
+    const deliveryprdct = values?.deliveryProducts.map(item => ({ productId: item.value }));
+    values.deliveryProducts = deliveryprdct
     const apiurl = values?.id? `${suppliersapi}/${values.id}` : suppliersapi;
     mutation.mutate({
         method: values?.id? "put":"post",
@@ -221,6 +249,8 @@ export default function Suppliers() {
     initialValues={{
       name: selectData?.name || "",
       phone: selectData?.phone || "",
+      deliveryProducts: selectData?.deliveryProducts || [],
+      riskLevel: selectData?.riskLevel || "",
       ...(selectData?.id ? { id: selectData.id } : {}),
     }}
     validate={values => {
@@ -237,11 +267,38 @@ export default function Suppliers() {
       handleSubmit(values,actions)
     }}
   >
-    {({ handleSubmit, isSubmitting }) => (
+    {({ handleSubmit, isSubmitting ,values}) =>{
+      console.log("values",values)
+      return (
       <Form onSubmit={handleSubmit}>
         <Row>
           <FormikField name="name" label="Name" placeholder="Enter name..." colWidth={12} />
           <FormikField name="phone" type="text" label="Phone" placeholder="Enter phone..." colWidth={12} />
+          <SingleSelect
+            name="riskLevel"
+            label="Choose Risk Level"
+            placeholder="Select risk"
+            className="w-100"
+            options={[
+              {value:"high",label:"high risk"},
+              {value:"medium",label:"medium risk"},
+              {value:"low",label:"low risk"}
+            ]}
+            // options={pricedataOption.filter(option => option.value !== 1) || []}
+            variant="border" 
+          />          
+          <MultiSelect
+          label="deliveryProducts"
+            name="deliveryProducts"
+            
+            isCheck={true}
+            options={productlistdataOption||[]}
+            // value={selectedAttributes}
+            // onChange={(selectedAttributes) =>
+            //   updateSelectedAttributes(selectedAttributes)
+            // }
+            placeholder="Select or search existing"
+          />
         </Row>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -252,7 +309,7 @@ export default function Suppliers() {
           </Button>
         </Modal.Footer>
       </Form>
-    )}
+    )}}
   </Formik>
 </Commonmodal>
           <ConfirmationDialog

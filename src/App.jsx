@@ -6,6 +6,7 @@ import PageDashboard from "./pages/private/Dasboard/PageDashboard";
 import PageNotFound from "./pages/public/PageNotFound";
 import {
   basePath,
+  DetailsPath,
   DishesPath,
   ProductsPath,
   ReceipePath,
@@ -27,6 +28,8 @@ import Storage from "./pages/private/Storage/storage"
 import Recepies from "./pages/private/Menu/Recepies";
 import Dishes from "./pages/private/Menu/Dishes";
 import Thermometers from "./pages/private/Restaurant/Thermometers";
+import { BaseUrl } from "./services/BaseUrls";
+import Details from "./pages/private/Receiving/Details";
 
 
 
@@ -36,15 +39,13 @@ function App() {
     <div>
       <Routes>
         <Route path="/login" element={<PageLogin />} />
+        <Route path={`${basePath+DetailsPath}/:id`} element={<Details />} />
         <Route path={basePath} element={<PrivateRoute><RouterConnection /></PrivateRoute>}>
           <Route index element={<PageDashboard />} />
-         
           <Route
             path={basePath + settingsPath}
             element={<SettingsManagement />}
           />
-        
-         
           <Route
             path={basePath + ProductsPath}
             element={<Products />}
@@ -56,13 +57,11 @@ function App() {
           <Route
             path={basePath + RestuarantPath}
             element={<Restaurant />}
-          />
-          
+          />    
           <Route
             path={basePath + ReceivingPath}
             element={<Receiving />}
-          />
-          
+          />     
           <Route
             path={basePath + StoragesPath}
             element={<Storage />}
@@ -70,22 +69,18 @@ function App() {
           <Route
             path={basePath + DishesPath}
             element={<Dishes />}
-          />
-          
+          />       
           <Route
             path={`${basePath+ReceipePath}/:id`}
             element={<Recepies />}
-          />
-       
+          />      
           <Route
             path={`${basePath+ThermometerPath}/:id`}
             element={<Thermometers />}
-          />
-       
-          
-          
-          
+          /> 
         </Route>
+        
+        
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </div>

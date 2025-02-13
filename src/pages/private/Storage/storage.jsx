@@ -201,7 +201,7 @@ export default function Storage() {
                   <div className="card border-0 px-25">
                     <div className="card-header px-0 border-0">
                       <h6>Storages</h6>
-                      <div className="card-extra">
+                      {/* <div className="card-extra">
                         <ul
                           className="card-tab-links nav-tabs nav"
                           role="tablist"
@@ -225,7 +225,7 @@ export default function Storage() {
                             </a>
                           </li>
                         </ul>
-                      </div>
+                      </div> */}
                     </div>
                     {/* <div className="card-header px-0 border-0">
                 
@@ -303,7 +303,7 @@ export default function Storage() {
               </div>
             </div>
           </div>
-          <Commonmodal show={show} handleClose={handleClose} title={"Product"}>
+          {/* <Commonmodal show={show} handleClose={handleClose} title={"Product"}>
   <Formik
     initialValues={{
       supplierId: selectData?.supplierId || "",
@@ -325,15 +325,6 @@ export default function Storage() {
     errors.supplierId = 'Supplier is required';
   }
 
-  // Invoice number validation
-  // if (!values.invoiceNo) {
-  //   errors.invoiceNo = 'Invoice number is required';
-  // }
-  // if (!values.quantity) {
-  //   errors.quantity = 'quantity is required';
-  // } else if (isNaN(values.quantity)) {
-  //   errors.quantity = 'quantity must be a number';
-  // }
 
   // Product validation
   if (!values.productId) {
@@ -354,24 +345,6 @@ export default function Storage() {
     errors.expiryDate = 'Enter a valid date in YYYY-MM-DD format';
   }
 
-  // Temperature validation
-  // if (!values.temperature) {
-  //   errors.temperature = 'Temperature is required';
-  // } else if (isNaN(values.temperature)) {
-  //   errors.temperature = 'Temperature must be a number';
-  // }
-
-  // Vehicle temperature validation
-  // if (!values.vehicleTemperature) {
-  //   errors.vehicleTemperature = 'Vehicle temperature is required';
-  // } else if (isNaN(values.vehicleTemperature)) {
-  //   errors.vehicleTemperature = 'Vehicle temperature must be a number';
-  // }
-
-  // Vehicle number validation
-  // if (!values.vehicleNo) {
-  //   errors.vehicleNo = 'Vehicle number is required';
-  // }
       return errors;
     }}
     onSubmit={(values, actions) => {
@@ -420,7 +393,7 @@ export default function Storage() {
       </Form>
     )}
   </Formik>
-</Commonmodal>
+</Commonmodal> */}
 
           <ConfirmationDialog
         open={confirmationState}
