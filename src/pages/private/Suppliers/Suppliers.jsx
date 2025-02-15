@@ -54,9 +54,39 @@ export default function Suppliers() {
   }));
 
   const handleExport = () => {
-    const data = supplierslist?.data?.docs
+    // const data = supplierslist?.data?.docs
+    const rawData = supplierslist?.data?.docs;
+    if (!rawData || rawData.length === 0) {
+      console.error("No data available for export.");
+      return;
+    }
+    
+    // Transform each row to include the computed "Delivery Products" field
+    const exportData = rawData.map(row => {
+      // Compute delivery products names like in your table cell
+      let computedDeliveryProducts = "";
+      const product = row?.deliveryProducts;
+      if (Array.isArray(product)) {
+        const productIdsStr = product.map(item => item?.productId).join(", ");
+        const idArray = productIdsStr
+          .split(',')
+          .map(id => Number(id.trim()));
+        computedDeliveryProducts = productlistdata?.data?.docs
+          .filter(item => idArray.includes(item?.id))
+          .map(item => item.name)
+          .join(", ");
+      }
+      
+      return {
+        Name: row.name,
+        Phone: row.phone,
+        "Delivery Products": computedDeliveryProducts,
+        Risk: row.riskLevel,
+        // add more fields if needed (skip Action column since it's UI only)
+      };
+    });
 
-    const csv = Papa.unparse(data);
+    const csv = Papa.unparse(exportData);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -80,12 +110,16 @@ export default function Suppliers() {
       header: 'Delivery Products ',
       accessorKey: 'deliveryproducts',
       cell: ({ row }) => {
-        const product = row?.original?.deliveryproducts;
+        const product = row?.original?.deliveryProducts;
         if (Array.isArray(product)) {
           const productNames = product
-            .map((item) => item?.productNames?.name)
+            .map((item) => item?.productId)
             .join(", ");
-          return natureNames || "";
+            const idArray = productNames
+              .split(',')
+              .map(id => Number(id.trim()));
+            const prodcutname = productlistdata?.data?.docs.filter((item => idArray.includes(item?.id))).map(item => item.name).join(", ");;
+          return prodcutname || "";
         }
         return "";
       },
@@ -93,7 +127,7 @@ export default function Suppliers() {
    
     {
       header: 'Risk',
-      accessorKey: 'risk',
+      accessorKey: 'riskLevel',
     },
    
     {
@@ -249,7 +283,13 @@ export default function Suppliers() {
     initialValues={{
       name: selectData?.name || "",
       phone: selectData?.phone || "",
-      deliveryProducts: selectData?.deliveryProducts || [],
+      deliveryProducts: (selectData?.deliveryProducts || []).map(item => {
+        const productInfo = productlistdata?.data?.docs.find(product => product.id === item.productId);
+        return {
+          label: productInfo ? productInfo.name : '',
+          value: item.productId
+        };
+      }),
       riskLevel: selectData?.riskLevel || "",
       ...(selectData?.id ? { id: selectData.id } : {}),
     }}
@@ -268,7 +308,7 @@ export default function Suppliers() {
     }}
   >
     {({ handleSubmit, isSubmitting ,values}) =>{
-      console.log("values",values)
+      console.log("values,,,,,,,,,,,",values)
       return (
       <Form onSubmit={handleSubmit}>
         <Row>

@@ -162,14 +162,13 @@ const SingleSelect = ({
           isClearable // Enable the clear (close) icon
           isDisabled={props.disabled}
         />
-
         {meta.touched && meta.error ? (
           <div className="text-danger small mb-1" style={{ height: "12px" }}>
             {typeof meta.error === "string" && meta.error}
           </div>
         ) : (
           <div className="text-transparent small mb-1" style={{ height: "12px" }}>
-            .
+            
           </div>
         )}
       </div>

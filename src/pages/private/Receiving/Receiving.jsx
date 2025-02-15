@@ -17,22 +17,20 @@ import Commonmodal from '../../../components/modals/Commonmodal.jsx';
 import { moveItemsapi, receivingsapi } from '../../../services/BaseUrls.jsx';
 import SingleSelect from '../../../components/ui/SingleSelect.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
-import { DatabaseBackup,ArchiveRestore, Trash2 } from 'lucide-react';
+import { DatabaseBackup,ArchiveRestore, Trash2, Pencil } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Papa from "papaparse";
 import BasicSelect from '../../../components/BasicSelect.jsx';
 import BasicInput from '../../../components/BasicInput.jsx';
-import { DetailsPath } from '../../../services/UrlPaths.jsx';
-import { useReactToPrint } from "react-to-print";
 import Barcode from 'react-barcode';
-import PrintBarcode from '../../../utils/PrintQr.jsx';
+import { ReceiveformatBarcode } from '../../../utils/Barcode.jsx';
 export default function Receiving() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide,search } = useContext(ContextDatas);
   const [show, setShow] = useState(false);
   const [storageshow, setStorageShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow=()=>setShow(true)
+  
   const [confirmationState,setConfirmationState]=useState(false)
   const [deleteId,setDeleteId]=useState(null)
   const [selectData,setselectData] =useState('')
@@ -63,30 +61,81 @@ export default function Receiving() {
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
   const { data: storagelist} = useFetchData('storages',fetchStorages);
   
-   // --- Barcode printing setup ---
-   const [selectedBarcode, setSelectedBarcode] = useState('');
-   const [selectedBarcodeLabel, setSelectedBarcodeLabel] = useState('');
-   const barcodePrintRef = useRef(null);
-   
-   const printBarcodee = useReactToPrint({
-     content: () => barcodePrintRef.current,
-     documentTitle: 'Barcode',
-     // You can add additional options here (e.g., remove margins via CSS for thermal printing)
-   });
-   
-   const handlePrintBarcode = (row) => {
-     const barcodeValue = row?.original?.id; // or any value you want to encode
-     const barcodeLabel = row?.original?.invoiceNo ? `Invoice: ${row.original.invoiceNo}` : `ID: ${barcodeValue}`;
-     setSelectedBarcode(barcodeValue);
-     setSelectedBarcodeLabel(barcodeLabel);
-     // Wait for state update before printing
-     
-     setTimeout(() => {
-      printBarcodee();
-     }, 100);
-   };
-   // --- End Barcode printing setup ---
 
+  const handleShow = (selectedData) => {
+    setShow(true);
+    setselectData(selectedData);
+  };
+  console.log("selsecteed  data ",selectData)
+  //  const onPrintBarcode = () => {
+  //   var container = document.getElementById("div-svg");
+  //   var mySVG = document.getElementById("barcode-canvas");
+  //   var width = "100%";
+  //   var height = "100%";
+  //   var printWindow = window.open('', 'PrintMap');
+  //   printWindow.document.writeln(container.innerHTML);
+  //   printWindow.document.close();
+  //   printWindow.print();
+  //   printWindow.close();
+  // }
+   // --- End Barcode printing setup ---
+   const onPrintBarcode = () => {
+    const container = document.getElementById("div-svg");
+    const mySVG = document.getElementById("barcode-canvas");
+    
+    // Create print window
+    const printWindow = window.open('', 'PrintMap');
+    
+    // Add thermal printer-friendly styles
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Barcode Print</title>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <style>
+            @media print {
+              @page {
+                margin: 0;
+                size: 80mm 100%; /* Typical thermal paper width */
+              }
+              body {
+                margin: 0;
+                padding: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                // min-height: 100vh;
+              }
+              .print-container {
+                width: 100% !important;
+                max-width: 80mm !important;
+                text-align: center;
+              }
+              svg {
+                width: 100% !important;
+                height: auto !important;
+                max-width: 80mm !important;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print-container">
+            ${container.innerHTML}
+          </div>
+        </body>
+      </html>
+    `);
+  
+    printWindow.document.close();
+    
+    // Delay print to ensure content loads
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 100);
+  };
   const handleExport = () => {
     // Access the raw data
     const rawData = receivinglist?.data?.docs;
@@ -165,18 +214,28 @@ export default function Receiving() {
     label: item.name,
     value: item.id
   }));
-  // console.log("supplier value",supplierOption)
-  const [productImagePreview, setProductImagePreview] = useState(null);
-  const formatDate = (isoString) => {
-    if (!isoString) return ''; // Handle undefined or null
+
+  // const formatDate = (isoString) => {
+  //   if (!isoString) return ''; // Handle undefined or null
   
-    try {
-      const date = parseISO(isoString);
-      return format(date,'dd-MM-yyyy');
-    } catch (error) {
-      console.error('Invalid date string:', isoString);
+  //   try {
+  //     const date = parseISO(isoString);
+  //     return format(date,'dd-MM-yyyy');
+  //   } catch (error) {
+  //     console.error('Invalid date string:', isoString);
+  //     return '';
+  //   }
+  // };
+  const formatDate = (dateInput) => {
+    const date = new Date(dateInput);
+    if (isNaN(date)) {
+      // Handle invalid date
       return '';
     }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
   const columns = useMemo(() => [
     {
@@ -219,6 +278,13 @@ export default function Receiving() {
       cell: ({row})=>{
         return formatDate(row?.original?.expiryDate)
       }
+    },
+    {
+      header: 'Storage',
+      accessorKey: 'storage',
+      // cell: ({row})=>{
+      //   return formatDate(row?.original?.expiryDate)
+      // }
     },
     {
       header: 'Temp',
@@ -265,8 +331,8 @@ export default function Receiving() {
       accessorKey: 'vehicleNo',
       cell:({row})=>{
         return(
-          <div style={{ height: "auto", margin: "0 auto", maxWidth: "", width: "100%"  }} onClick={() => handlePrintBarcode(row)} >
-            <Barcode height={30} format='CODE128'  value={row?.original?.id} />
+          <div id='div-svg' style={{ height: "auto", margin: "0 auto", maxWidth: "", width: "100%"  }} onClick={() => onPrintBarcode ()} >
+            <Barcode height={50} width={1} format='CODE128'  value={ReceiveformatBarcode(row?.original?.id)} />
           </div>
         )
       }
@@ -276,14 +342,14 @@ export default function Receiving() {
       cell: ({ row }) => {
         // Define functions inside the cell property
         return (
-          <ul className="d-flex justify-content-center">
-            <li>
+          <ul >
+            <li className="text-align-center d-flex gap-3">
               <a href="#" className="view" onClick={()=>handleDeleteConfirmation(row?.original?.id)}>
                 <Trash2 className="wh-20 flex-shrink-0 cursor-pointer" />
               </a>
-              {/* <a href="#" className="view m-3" onClick={()=>handleShow(row.original)}>
-                <Pencil className="wh-20 flex-shrink-0 cursor-pointer" />
-              </a> */}
+              {/* <a href="#" className="view " onClick={()=>handleShow(row.original)}>
+                              <Pencil className="wh-20 flex-shrink-0 cursor-pointer" />
+                            </a> */}
             </li>
           </ul>
         );
@@ -371,7 +437,6 @@ export default function Receiving() {
                           role="tablist"
                         >
                           
-                          
                           <li>
                             <a
                               href="#t_selling-month333"
@@ -420,31 +485,27 @@ export default function Receiving() {
       />
       {/* <pre>{JSON.stringify(jsonData, null, 2)}</pre> */}
     </div>
-                          </li>
-                          <li>
-                            <button
-                              
-                              data-bs-toggle="tab"
-                              id="t_selling-month333-tab"
-                              role="tab"
-                              aria-selected="true"
-                              className='btn btn-primary '
-                              style={{marginLeft:"1px"}}
-                              onClick={()=>handleExport()
-                              }
-                            >
-                              Export Excel
-                            </button>
-                          </li>
-                        </ul>
-           
-                      
-                    </div>
-                   
-                      
-                               <div className='row'>
-                                <div className='col-6 col-md-3'>
-                                <BasicSelect
+      </li>
+      <li>
+        <button 
+          data-bs-toggle="tab"
+          id="t_selling-month333-tab"
+          role="tab"
+          aria-selected="true"
+          className='btn btn-primary '
+          style={{marginLeft:"1px"}}
+          onClick={()=>handleExport()
+          }
+        >
+          Export Excel
+        </button>
+      </li>
+    </ul>
+    </div>
+    <div className='row'>
+      
+    <div className='col-6 col-md-3'>
+      <BasicSelect
         label="Choose Supplier"
         name="supplierId"
         variant="border" 
@@ -475,39 +536,39 @@ export default function Receiving() {
           }}
         placeholder="Select product..."
       />
-                                </div>
-                                <div className='col-6 col-md-3'>
-                                <BasicInput
-                                label="Expiry Start Date"
-                                value={params.expiryStartDate}
-                                onChange={(e) => {
-                                  
-                                  setParams((prev)=>({
-                                    ...prev,
-                                    expiryStartDate:e
-                                  }))
-                                }}
-                                className="mb-3"
-                                type='date'
-                                
-                                />
-                                </div>
-                                <div className='col-6 col-md-3'>
-                                <BasicInput
-                                label="Expiry End Date"
-                                value={params?.expiryEndDate}
-                                onChange={(e) => {
-                                  setParams((prev)=>({
-                                    ...prev,
-                                    expiryEndDate:e
-                                  }))
-                                }}
-                                className="mb-3"
-                                type='date'
-                                
-                                />
-                                </div>
-                               </div>
+                </div>
+                <div className='col-6 col-md-3'>
+                <BasicInput
+                label="Expiry Start Date"
+                value={params.expiryStartDate}
+                onChange={(e) => {
+                  
+                  setParams((prev)=>({
+                    ...prev,
+                    expiryStartDate:e
+                  }))
+                }}
+                className="mb-3"
+                type='date'
+                
+                />
+                </div>
+                <div className='col-6 col-md-3'>
+                <BasicInput
+                label="Expiry End Date"
+                value={params?.expiryEndDate}
+                onChange={(e) => {
+                  setParams((prev)=>({
+                    ...prev,
+                    expiryEndDate:e
+                  }))
+                }}
+                className="mb-3"
+                type='date'
+                
+                />
+                </div>
+                </div>
                     <div className="card-body p-0">
                       <div className="tab-content">
                         <div
@@ -547,6 +608,7 @@ export default function Receiving() {
       temperature: selectData?.temperature || "",
       vehicleTemperature: selectData?.vehicleTemperature || "",
       vehicleNo: selectData?.vehicleNo || "",
+      storage: selectData?.storage || "",
       ...(selectData?.id ? { id: selectData.id } : {}),
     }}
     validate={values => {
@@ -610,7 +672,9 @@ export default function Receiving() {
 
     }}
   >
-    {({ handleSubmit, isSubmitting }) => (
+    {({ handleSubmit, isSubmitting,values }) => {
+      console.log(";;;;;;;;;;;;;;;;;;;;;;;;values",values)
+      return (
       <Form onSubmit={handleSubmit}>
         <Row>
         <SingleSelect
@@ -634,11 +698,23 @@ export default function Receiving() {
           />   
           <FormikField name="quantity" type="text" label="Quantity" placeholder="Enter quantity..." colWidth={12} />
           <FormikField name="uom" type="text" label="unit of measure" placeholder="Enter unit..." colWidth={12} />
-          <FormikField name="productionDate" type="date" label="Product date" placeholder="Enter product date..." colWidth={12} />
-          <FormikField name="expiryDate" type="date" label="Expiry date" placeholder="Enter Expirydate..." colWidth={12} />
+          <FormikField name="productionDate" value={formatDate(values?.productionDate)} type="date" label="Product date" placeholder="Enter product date..." colWidth={12} />
+          <FormikField name="expiryDate" type="date"  value={formatDate(values?.expiryDate)} label="Expiry date" placeholder="Enter Expirydate..." colWidth={12} />
           <FormikField name="temperature" type="number" label="Temperature" placeholder="Enter temperature..." colWidth={12} />
           <FormikField name="vehicleTemperature" type="number" label="Vehicle Temperature" placeholder="Enter vehicle temperature..." colWidth={12} />
           <FormikField name="vehicleNo" type="text" label="VehicleNo" placeholder="Enter vehicleNo..." colWidth={12} />
+          <SingleSelect
+            name="storage"
+            label="Choose storage"
+            placeholder="Select storage"
+            className="w-100"
+            options={storagelist?.data?.map(item => ({
+              label: item.name,
+              value: item.name
+            }))||[]}
+            // options={pricedataOption.filter(option => option.value !== 1) || []}
+            variant="border" 
+          />   
         </Row>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -649,7 +725,7 @@ export default function Receiving() {
           </Button>
         </Modal.Footer>
       </Form>
-    )}
+    )}}
   </Formik>
 </Commonmodal>
 
@@ -712,8 +788,8 @@ export default function Receiving() {
             options={Kitchenoptions||[]}
             // options={pricedataOption.filter(option => option.value !== 1) || []}
             variant="border" 
-          />          
-        
+          />     
+          {/* <FormikField name="quantity" type="number" label="Quantity" placeholder="Enter Quantity..." colWidth={12} />      */}
           <SingleSelect
             name="storageId"
             label="Choose storage"
@@ -722,9 +798,7 @@ export default function Receiving() {
             options={storageItemlistOption||[]}
             // options={pricedataOption.filter(option => option.value !== 1) || []}
             variant="border" 
-          />   
-          
-
+          />      
         </Row>
         <Modal.Footer>
           <Button variant="secondary" onClick={()=>setStorageShow(false)}>
@@ -738,10 +812,6 @@ export default function Receiving() {
     )}}
   </Formik>
       </Commonmodal>
-      {/* Hidden container for barcode printing */}
-      <div ref={barcodePrintRef} className="">
-  <PrintBarcode  value={selectedBarcode} label={selectedBarcodeLabel} />
-</div>
         </div>
       )
     </>
