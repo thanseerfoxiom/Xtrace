@@ -87,12 +87,12 @@ function Pagination({ pagination, setPagination }) {
 
   return (
     <nav className="dm-page mb-2 px-2 pb-2" style={{ float: "right" }}>
-      <ul className="dm-pagination d-flex align-items-center">
-        <li className="dm-pagination__item">
+      <ul className="dm-pagination d-flex flex-nowrap align-items-center m-0 p-0">
+        <li className="dm-pagination__item d-flex flex-nowrap">
           <button 
             onClick={() => handlePageChange(0)} 
             disabled={!hasPrevious}
-            className="dm-pagination__link pagination-control me-2"
+            className="dm-pagination__link pagination-control py-1 px-2"
           >
             <span className="la la-angle-double-left" />
             
@@ -100,7 +100,7 @@ function Pagination({ pagination, setPagination }) {
           <button 
             onClick={() => handlePageChange(page - 1)} 
             disabled={!hasPrevious}
-            className="dm-pagination__link pagination-control "
+            className="dm-pagination__link pagination-control  py-1 px-2 "
           >
             <span className="la la-angle-left" />
             
@@ -108,17 +108,17 @@ function Pagination({ pagination, setPagination }) {
         </li>
 
         {/* Page Numbers */}
-        <li className="dm-pagination__item">
-          <span className="">
+        <li className="dm-pagination__item mx-2 text-nowrap">
+          <span className="small">
             Page {page } of {totalPages}
           </span>
         </li>
 
-        <li className="dm-pagination__item">
+        <li className="dm-pagination__item d-flex flex-nowrap">
           <button 
             onClick={() => handlePageChange(page + 1)} 
             disabled={!hasNext}
-            className="dm-pagination__link pagination-control "
+            className="dm-pagination__link pagination-control  py-1 px-2"
           >
             
             <span className="la la-angle-right" />
@@ -126,7 +126,7 @@ function Pagination({ pagination, setPagination }) {
           <button 
             onClick={() => handlePageChange(totalPages )} 
             disabled={!hasNext}
-            className="dm-pagination__link pagination-control"
+            className="dm-pagination__link pagination-control  py-1 px-2"
           >
             
             <span className="la la-angle-double-right" />

@@ -13,6 +13,7 @@ export const StoragesPath = "storages"
 export const DishesPath = "dishes"
 export const ReceipePath = "receipe"
 export const ThermometerPath = "thermometer"
+export const OperationsPath = "operations"
 export const DetailsPath = "details"
 
 

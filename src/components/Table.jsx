@@ -26,21 +26,21 @@ export default function Table({data, columns, pagination,setParams}) {
     <div className=" mt-1 p-2 table-responsive">
     <table className="table table--default body-px-25">
                             
-                              <thead>
-                                {table?.getHeaderGroups()?.map(headerGroup => (
-                                  <tr key={headerGroup?.id}>
-                                    {headerGroup?.headers?.map(header => (
-                                     <th 
-                                     key={header?.id} 
-                                     className="pt-6 pb-[27px] px-[22px] bg-tableheader border border-inputborder text-left text-buttontextcolor whitespace-nowrap">
-                                     <h5>{header ? flexRender(header?.column?.columnDef?.header, header?.getContext()) : null}</h5>
-                                   </th>
-                                    ))}
-                                  </tr>
-                                ))}
-                              </thead>
-                              <tbody>
-                              {table.getRowModel().rows.length > 0 ? (
+            <thead>
+              {table?.getHeaderGroups()?.map(headerGroup => (
+                <tr key={headerGroup?.id}>
+                  {headerGroup?.headers?.map(header => (
+                    <th 
+                    key={header?.id} 
+                    className="pt-6 pb-[27px] px-[22px] bg-tableheader border border-inputborder text-left text-buttontextcolor whitespace-nowrap">
+                    <h5>{header ? flexRender(header?.column?.columnDef?.header, header?.getContext()) : null}</h5>
+                  </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+            {table.getRowModel().rows.length > 0 ? (
             table.getRowModel().rows.map((row) => (
               <tr key={row.id} className='hover:bg-gray-100'>
                 {row.getVisibleCells().map((cell,index) => {
@@ -73,14 +73,13 @@ export default function Table({data, columns, pagination,setParams}) {
           )}
         </tbody>
       </table>
-                        </div>
-                        {pagination?
-                        <Pagination 
+      </div>
+      {pagination?
+      <Pagination 
         pagination={pagination} 
         setPagination={setParams} 
       />
-      :""}
-                           
-                            </>
+      :""}      
+      </>
   )
 }

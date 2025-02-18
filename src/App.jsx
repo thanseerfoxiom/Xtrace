@@ -8,6 +8,7 @@ import {
   basePath,
   DetailsPath,
   DishesPath,
+  OperationsPath,
   ProductsPath,
   ReceipePath,
   ReceivingPath,
@@ -30,6 +31,7 @@ import Dishes from "./pages/private/Menu/Dishes";
 import Thermometers from "./pages/private/Restaurant/Thermometers";
 import { BaseUrl } from "./services/BaseUrls";
 import Details from "./pages/private/Receiving/Details";
+import Operations from "./pages/private/Restaurant/Operations";
 
 
 
@@ -77,6 +79,10 @@ function App() {
           <Route
             path={`${basePath+ThermometerPath}/:id`}
             element={<Thermometers />}
+          /> 
+          <Route
+            path={`${basePath+OperationsPath}/:id`}
+            element={<Operations />}
           /> 
         </Route>
         

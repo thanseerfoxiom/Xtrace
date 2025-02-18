@@ -1,5 +1,5 @@
 import { ApiCall } from "../services/ApiCall"
-import { dishesapi, productsapi, receivingsapi, recipesapi, restaurantsapi, storageItemsapi, storagesapi, suppliersapi, thermometersapi } from "../services/BaseUrls"
+import { dishesapi, kitchenoperationsapi, productsapi, receivingsapi, recipesapi, restaurantsapi, storageItemsapi, storagesapi, suppliersapi, thermometersapi } from "../services/BaseUrls"
 
 export const fetchProduct = async(params)=> {
     const response = await ApiCall("GET",productsapi,null,params);
@@ -84,6 +84,15 @@ export const fetchthermometersItems = async(params)=> {
 }
 export const fetchReceivingproductItem = async(receivigId)=> {
     const response = await ApiCall("GET",`${receivingsapi}/${receivigId}`,null);
+    if(response?.status){
+        return response.message
+         }
+        else {
+        return []
+         }
+}
+export const fetchkitchenoperationsItem = async(params)=> {
+    const response = await ApiCall("GET",`${kitchenoperationsapi}`,null,params);
     if(response?.status){
         return response.message
          }

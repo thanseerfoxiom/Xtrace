@@ -14,7 +14,7 @@ import { Form, Button, Row } from 'react-bootstrap';
 import { fetchProduct, fetchReceiving, fetchRestuarent, fetchStorageItems, fetchStorages, fetchSuppliers } from '../../../api/index.js';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import Commonmodal from '../../../components/modals/Commonmodal.jsx';
-import { moveItemsapi, receivingsapi } from '../../../services/BaseUrls.jsx';
+import { moveItemsapi, receivingimportapi, receivingsapi } from '../../../services/BaseUrls.jsx';
 import SingleSelect from '../../../components/ui/SingleSelect.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { DatabaseBackup,ArchiveRestore, Trash2, Pencil } from 'lucide-react';
@@ -152,6 +152,7 @@ export default function Receiving() {
       productName: item.product?.name || "Unknown",
       quantity: parseFloat(item.quantity) || 0,
       uom: item.uom || "N/A",
+      storage: item.storage || "N/A",
       productionDate: formatDate(item.productionDate) || "N/A",
       expiryDate: formatDate(item.expiryDate) || "N/A",
       temperature: parseFloat(item.temperature) || 0,
@@ -185,8 +186,30 @@ export default function Receiving() {
         skipEmptyLines: true, // Skip empty lines
         complete: (result) => {
           const data = result.data; // Parsed JSON data
+
           // setJsonData(data);
           console.log("JSON Data:", data);
+          try {
+            mutation.mutate({
+              method:"post",
+              url: receivingimportapi,
+              values: data,
+              key: "receiving",
+              next: () => {
+                // handleClose(); 
+                // actions.resetForm()
+                // setdata(null)
+                // actions.setSubmitting(false)
+              },
+          },
+            { onError: (error) => {
+            actions.setSubmitting(false); 
+          },}
+        );
+          } catch (error) {
+           console.log(error) 
+          }
+          
         },
         error: (error) => {
           console.error("Error parsing CSV:", error);
@@ -347,9 +370,9 @@ export default function Receiving() {
               <a href="#" className="view" onClick={()=>handleDeleteConfirmation(row?.original?.id)}>
                 <Trash2 className="wh-20 flex-shrink-0 cursor-pointer" />
               </a>
-              {/* <a href="#" className="view " onClick={()=>handleShow(row.original)}>
+              <a href="#" className="view " onClick={()=>handleShow(row.original)}>
                               <Pencil className="wh-20 flex-shrink-0 cursor-pointer" />
-                            </a> */}
+                            </a>
             </li>
           </ul>
         );

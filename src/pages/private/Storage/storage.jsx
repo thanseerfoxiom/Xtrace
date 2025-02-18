@@ -11,7 +11,7 @@ import Table from '../../../components/Table.jsx';
 import FormikField from '../../../components/InputComponents.jsx';
 import { Formik } from 'formik';
 import { Form, Button, Row } from 'react-bootstrap';
-import { fetchProduct, fetchStorageItems, fetchStorages, fetchSuppliers } from '../../../api/index.js';
+import { fetchProduct, fetchRestuarent, fetchStorageItems, fetchStorages, fetchSuppliers } from '../../../api/index.js';
 import ConfirmationDialog from '../../../components/modals/ConfirmationDialog.jsx';
 import Commonmodal from '../../../components/modals/Commonmodal.jsx';
 import { receivingsapi, storageItemsapi } from '../../../services/BaseUrls.jsx';
@@ -20,6 +20,8 @@ import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { Eye, Trash2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Papa from "papaparse";
+import BasicInput from '../../../components/BasicInput.jsx';
+import BasicSelect from '../../../components/BasicSelect.jsx';
 
 
 export default function Storage() {
@@ -34,7 +36,9 @@ export default function Storage() {
   const [params,setParams] =useState({
           
           page:1,
-          limit:10
+          limit:10,
+          restaurantId:"",
+          storageId:"",
         })
    
         useEffect(() => {
@@ -47,7 +51,9 @@ export default function Storage() {
   const { data: productlistdata} = useFetchData('product',fetchProduct);
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
   const { data: storageItemlist} = useFetchData('storageitems',fetchStorageItems,params);
-  console.log("storageitem list",storageItemlist)
+  const { data: restuarantlist} = useFetchData('restuarant',fetchRestuarent);
+  const { data: storagelist} = useFetchData('storages',fetchStorages);
+  console.log("storageitem list",storagelist)
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -69,11 +75,15 @@ export default function Storage() {
     label: item.name,
     value: item.id
   }));
-  const productlistdataOption = productlistdata?.data?.docs?.map(item => ({
+  const kithendataOption = restuarantlist?.data?.docs?.map(item => ({
     label: item.name,
     value: item.id
   }));
-  // console.log("supplier value",supplierOption)
+  const storagedataOption = storagelist?.data?.map(item => ({
+    label: item.name,
+    value: item.id
+  }));
+  console.log("supplier value",storagedataOption)
   const [productImagePreview, setProductImagePreview] = useState(null);
 
  
@@ -227,6 +237,73 @@ export default function Storage() {
                         </ul>
                       </div> */}
                     </div>
+                    <div className='row'>
+      
+    <div className='col-6 col-md-3'>
+      <BasicSelect
+        label="Choose Kitchen"
+        name="restaurantId"
+        variant="border" 
+        options={kithendataOption}
+        value={params.restaurantId}
+        onChange={(selectedOption)=>{
+          setParams((prev) => ({
+            ...prev,
+            restaurantId: selectedOption?.value??"",
+          }));
+          }}
+        placeholder="Select Kitchen..."
+      />
+        </div>
+        <div className='col-6 col-md-3'>
+        <BasicSelect
+        label="Choose Storage"
+        name="storageId"
+        variant="border" 
+        options={storagedataOption}
+        value={params?.storageId}
+        onChange={(selectedOption)=>{
+          setParams((prev) => ({
+            ...prev,
+            storageId: selectedOption?.value??"",
+          }));
+           
+          }}
+        placeholder="Select storageId..."
+      />
+                </div>
+                {/* <div className='col-6 col-md-3'>
+                <BasicInput
+                label="Expiry Start Date"
+                value={params.expiryStartDate}
+                onChange={(e) => {
+                  
+                  setParams((prev)=>({
+                    ...prev,
+                    expiryStartDate:e
+                  }))
+                }}
+                className="mb-3"
+                type='date'
+                
+                />
+                </div>
+                <div className='col-6 col-md-3'>
+                <BasicInput
+                label="Expiry End Date"
+                value={params?.expiryEndDate}
+                onChange={(e) => {
+                  setParams((prev)=>({
+                    ...prev,
+                    expiryEndDate:e
+                  }))
+                }}
+                className="mb-3"
+                type='date'
+                
+                />
+                </div> */}
+                </div>
                     {/* <div className="card-header px-0 border-0">
                 
                         <ul
