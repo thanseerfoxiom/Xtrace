@@ -22,7 +22,8 @@ import { format, parseISO } from 'date-fns';
 import Papa from "papaparse";
 import BasicInput from '../../../components/BasicInput.jsx';
 import BasicSelect from '../../../components/BasicSelect.jsx';
-
+import Barcode from 'react-barcode';
+import { StorageformatBarcode } from '../../../utils/Barcode.jsx';
 
 export default function Storage() {
   const [pageLoading, setpageLoading] = useState(true);
@@ -131,6 +132,17 @@ export default function Storage() {
     {
       header: 'Storage',
       cell: ({ row }) => (row?.original?.storage?.name),
+    },
+    {
+      header: 'Barcode ',
+      accessorKey: 'vehicleNo',
+      cell:({row})=>{
+        return(
+          <div id='div-svg' style={{ height: "auto", margin: "0 auto", maxWidth: "", width: "100%"  }} onClick={() => onPrintBarcode ()} >
+            <Barcode height={50} width={1} format='CODE128'  value={StorageformatBarcode(row?.original?.id)} />
+          </div>
+        )
+      }
     },
     {
       header: 'Action',

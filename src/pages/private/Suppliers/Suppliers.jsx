@@ -34,24 +34,16 @@ export default function Suppliers() {
               page:1,
               limit:10
             })
-       
-            // useEffect(() => {
-            //       setParams((prev) => ({
-            //         ...prev,
-            //         search: search,
-            //       }));
-            //     }, [search])
   const {mutation} = useCustomMutation();
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers,params);
   const { data: productlistdata} = useFetchData('product',fetchProduct);
-  console.log("padataa",supplierslist?.data?.docs)
-
-
   const [productImagePreview, setProductImagePreview] = useState(null);
   const productlistdataOption = productlistdata?.data?.docs?.map(item => ({
     label: item.name,
     value: item.id
   }));
+
+  console.log("evuvusbdusbjdahb",supplierslist?.data?.docs)
 
   const handleExport = () => {
     // const data = supplierslist?.data?.docs
@@ -94,7 +86,6 @@ export default function Suppliers() {
     link.download = "ExportedSupplierData.csv";
     link.click();
   };
-  // Column definitions
   const columns = useMemo(() => [
     {
       header: 'Name',
@@ -104,8 +95,7 @@ export default function Suppliers() {
     {
       header: 'Phone',
       accessorKey: 'phone',
-    },
-   
+    },  
     {
       header: 'Delivery Products ',
       accessorKey: 'deliveryproducts',
@@ -120,21 +110,19 @@ export default function Suppliers() {
               .map(id => Number(id.trim()));
             const prodcutname = productlistdata?.data?.docs.filter((item => idArray.includes(item?.id))).map(item => item.name).join(", ");;
           return prodcutname || "";
+          // return productNames || "";
         }
         return "";
       },
     },
-   
     {
       header: 'Risk',
       accessorKey: 'riskLevel',
-    },
-   
+    }, 
     {
       header: 'Action',
       cell: ({ row }) => {
-        // Define functions inside the cell property
-        
+        // Define functions inside the cell property      
         return (
           <ul className="text-align-center d-flex">
             <li>
@@ -149,17 +137,15 @@ export default function Suppliers() {
         );
       },
     },
-  ], []);
+  ], [productlistdata,]);
   const handleDeleteConfirmation = (deleteId) => {
     setConfirmationState(true);
     setDeleteId(deleteId);
   };
-
   const handleShow = (selectedData) => {
     setShow(true);
     setselectData(selectedData);
   };
-
   const handleDelete=()=>{
     try {
       mutation.mutate({
@@ -191,10 +177,8 @@ export default function Suppliers() {
     },}
   );
   };
- 
   return (
-    <>
-       (
+    <> (
         <div className={`contents ${mobileSide ? 'expanded' : ''}`}>
           <div className="demo2 mb-25 t-thead-bg">
             <div className="container-fluid">
@@ -208,8 +192,6 @@ export default function Suppliers() {
                           className="card-tab-links nav-tabs nav"
                           role="tablist"
                         >
-                          
-                          
                           <li>
                             <a
                               href="#t_selling-month333"

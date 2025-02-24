@@ -1,10 +1,20 @@
 export const ReceiveformatBarcode = (value) => {
     if (!/^\d+$/.test(value)) {
       console.error('Invalid barcode value - must be numeric');
-      return <span>R000000</span>;
+      return <span>REC0000</span>;
     }
-    const formatted = String(value).padStart(6, '0');
+    const formatted = String(value).padStart(4, '0');
     console.log(".................",formatted)
-    return "R"+formatted;
+    return "REC"+formatted;
+  };
+  
+export const StorageformatBarcode = (value) => {
+    if (!/^\d+$/.test(value)) {
+      console.error('Invalid barcode value - must be numeric');
+      return <span>STR0000</span>;
+    }
+    const formatted = String(value).padStart(4, '0');
+    console.log(".................",formatted)
+    return "STR"+formatted;
   };
   

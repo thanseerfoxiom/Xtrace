@@ -766,6 +766,7 @@ export default function Receiving() {
     initialValues={{
       restaurantId: selectData?.restaurantId || "",
       storageId: selectData?.storageId || "",
+      // quantity: selectData?.quantity || "",
       receivingId: selectData?.id || "",
       // ...(selectData?.id ? { id: selectData.id } : {}),
     }}
