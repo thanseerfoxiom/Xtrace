@@ -25,7 +25,8 @@ export const useCustomMutation = () => {
           ShowToast("Internal Server Error", "error");
           throw new Error("Internal Server Error")
         }
-        ShowToast(response?.response?.data?.message, "error");
+        console.log("responesssssssss",response)
+        ShowToast(response?.message, "error");
         
         throw new Error(`HTTP status ${response.status}`);
       }

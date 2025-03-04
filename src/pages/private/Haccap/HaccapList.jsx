@@ -263,7 +263,7 @@ export default function HaccapList() {
         open={confirmationState}
         onOpenChange={setConfirmationState}
         title="Confirm Deletion"
-        message="Are you sure you want to delete this Restaurant ?"
+        message="Are you sure you want to delete this Haccap ?"
         onConfirm={handleDelete}
         onCancel={setConfirmationState}
       />
