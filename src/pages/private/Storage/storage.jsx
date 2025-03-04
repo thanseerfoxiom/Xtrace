@@ -86,7 +86,63 @@ export default function Storage() {
   }));
   console.log("supplier value",storagedataOption)
   const [productImagePreview, setProductImagePreview] = useState(null);
-
+  const onPrintBarcode = () => {
+    const container = document.getElementById("div-svg");
+    const mySVG = document.getElementById("barcode-canvas");
+    
+    // Create print window
+    const printWindow = window.open('', 'PrintMap');
+    
+    // Add thermal printer-friendly styles
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Barcode Print</title>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <style>
+            @media print {
+              @page {
+                margin: 0;
+                size: 80mm 100%; /* Typical thermal paper width */
+              }
+              body {
+                margin: 0;
+                padding: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                // min-height: 100vh;
+              }
+              .print-container {
+                width: 100% !important;
+                max-width: 80mm !important;
+                text-align: center;
+              }
+              svg {
+                width: 100% !important;
+                height: auto !important;
+                max-width: 80mm !important;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print-container">
+            ${container.innerHTML}
+          </div>
+        </body>
+      </html>
+    `);
+  
+    printWindow.document.close();
+    
+    // Delay print to ensure content loads
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 100);
+  };
  
  
   const formatDate = (isoString) => {

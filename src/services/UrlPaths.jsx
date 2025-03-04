@@ -15,5 +15,7 @@ export const ReceipePath = "receipe"
 export const ThermometerPath = "thermometer"
 export const OperationsPath = "operations"
 export const DetailsPath = "details"
+export const HaccapPath = "haccap"
+export const TodoPath = "todo"
 
 

@@ -3,11 +3,13 @@ import { ContextDatas } from "../services/Context";
 import {
   basePath,
   DishesPath,
+  HaccapPath,
   ProductsPath,
   ReceivingPath,
   RestuarantPath,
   StoragesPath,
   SuppliersPath,
+  TodoPath,
 } from "../services/UrlPaths";
 import { Link, useNavigate } from "react-router-dom/dist";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -61,6 +63,24 @@ function Sidebar() {
               >
                 <span className="nav-icon uil uil-crockery" />
                 <span className="menu-text">Dishes</span>
+              </Link>
+            </li>
+            <li className={urlPath.includes(HaccapPath) ? "active ms-2" : ""}>
+              <Link
+                to={basePath + HaccapPath}
+                onClick={() => setUrlPath(basePath + HaccapPath)}
+              >
+                <span className="nav-icon uil uil-check-circle" />
+                <span className="menu-text">HACCAP</span>
+              </Link>
+            </li>
+            <li className={urlPath.includes(TodoPath) ? "active ms-2" : ""}>
+              <Link
+                to={basePath + TodoPath}
+                onClick={() => setUrlPath(basePath + TodoPath)}
+              >
+                <span className="nav-icon uil  uil-list-ul" />
+                <span className="menu-text">ToDo HACCAP</span>
               </Link>
             </li>
 

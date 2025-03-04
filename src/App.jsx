@@ -8,6 +8,7 @@ import {
   basePath,
   DetailsPath,
   DishesPath,
+  HaccapPath,
   OperationsPath,
   ProductsPath,
   ReceipePath,
@@ -17,6 +18,7 @@ import {
   StoragesPath,
   SuppliersPath,
   ThermometerPath,
+  TodoPath,
 } from "./services/UrlPaths";
 
 import SettingsManagement from "./pages/private/Settings/SettingsManagement";
@@ -32,6 +34,8 @@ import Thermometers from "./pages/private/Restaurant/Thermometers";
 import { BaseUrl } from "./services/BaseUrls";
 import Details from "./pages/private/Receiving/Details";
 import Operations from "./pages/private/Restaurant/Operations";
+import HaccapList from "./pages/private/Haccap/HaccapList";
+import TodoHaccap from "./pages/private/Haccap/TodoHaccap";
 
 
 
@@ -83,6 +87,14 @@ function App() {
           <Route
             path={`${basePath+OperationsPath}/:id`}
             element={<Operations />}
+          /> 
+          <Route
+            path={`${basePath+HaccapPath}`}
+            element={<HaccapList />}
+          /> 
+          <Route
+            path={`${basePath+TodoPath}`}
+            element={<TodoHaccap />}
           /> 
         </Route>
         

@@ -1,5 +1,5 @@
 import { ApiCall } from "../services/ApiCall"
-import { dishesapi, kitchenoperationsapi, productsapi, receivingsapi, recipesapi, restaurantsapi, storageItemsapi, storagesapi, suppliersapi, thermometersapi } from "../services/BaseUrls"
+import { dishesapi, Haccapapi, Haccapcheckapi, kitchenoperationsapi, productsapi, receivingsapi, recipesapi, restaurantsapi, storageItemsapi, storagesapi, suppliersapi, thermometersapi } from "../services/BaseUrls"
 
 export const fetchProduct = async(params)=> {
     const response = await ApiCall("GET",productsapi,null,params);
@@ -93,6 +93,24 @@ export const fetchReceivingproductItem = async(receivigId)=> {
 }
 export const fetchkitchenoperationsItem = async(params)=> {
     const response = await ApiCall("GET",`${kitchenoperationsapi}`,null,params);
+    if(response?.status){
+        return response.message
+         }
+        else {
+        return []
+         }
+}
+export const fetchHaccapItems = async(params)=> {
+    const response = await ApiCall("GET",`${Haccapapi}`,null,params);
+    if(response?.status){
+        return response.message
+         }
+        else {
+        return []
+         }
+}
+export const fetchTODOItems = async(params)=> {
+    const response = await ApiCall("GET",`${Haccapcheckapi}`,null,params);
     if(response?.status){
         return response.message
          }

@@ -766,7 +766,7 @@ export default function Receiving() {
     initialValues={{
       restaurantId: selectData?.restaurantId || "",
       storageId: selectData?.storageId || "",
-      // quantity: selectData?.quantity || "",
+      quantity: selectData?.quantity || "",
       receivingId: selectData?.id || "",
       // ...(selectData?.id ? { id: selectData.id } : {}),
     }}
@@ -813,7 +813,7 @@ export default function Receiving() {
             // options={pricedataOption.filter(option => option.value !== 1) || []}
             variant="border" 
           />     
-          {/* <FormikField name="quantity" type="number" label="Quantity" placeholder="Enter Quantity..." colWidth={12} />      */}
+          <FormikField name="quantity" type="number" label="Quantity" placeholder="Enter Quantity..." colWidth={12} />     
           <SingleSelect
             name="storageId"
             label="Choose storage"
