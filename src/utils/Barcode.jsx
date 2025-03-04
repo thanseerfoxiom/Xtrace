@@ -5,7 +5,7 @@ export const ReceiveformatBarcode = (value) => {
     }
     const formatted = String(value).padStart(4, '0');
     console.log(".................",formatted)
-    return "REC"+formatted;
+    return "REC-"+value+"-1546";
   };
   
 export const StorageformatBarcode = (value) => {
@@ -15,6 +15,6 @@ export const StorageformatBarcode = (value) => {
     }
     const formatted = String(value).padStart(4, '0');
     console.log(".................",formatted)
-    return "STR"+formatted;
+    return "STR-"+value+"-1546";
   };
   
