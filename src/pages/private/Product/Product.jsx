@@ -103,7 +103,7 @@ export default function Products() {
       },
       {
         header: 'UOM',
-        accessorKey: 'UOM',
+        accessorKey: 'uom',
       },
       {
         header: 'Description',
@@ -267,14 +267,14 @@ export default function Products() {
     initialValues={{
       name: selectData?.name || "",
       image: selectData?.image || "",
-      UOM: selectData?.UOM || "",
+      uom: selectData?.uom || "",
       description: selectData?.description || "",
       ...(selectData?.id ? { id: selectData.id } : {}),
     }}
     validate={values => {
       const errors = {};
       if (!values.name) errors.name = 'Name Required';
-      if (!values.UOM) errors.UOM = 'UOM Required';
+      if (!values.uom) errors.uom = 'uom Required';
       return errors;
     }}
     onSubmit={(values,actions ) => {
@@ -286,7 +286,7 @@ export default function Products() {
         <Row>
           <FormikField name="name" label="Name" placeholder="Enter name..." colWidth={12} />
           <FormikField name="image" label="Image url" placeholder="Enter image url..." colWidth={12} />
-          <FormikField name="UOM"  label="UOM" placeholder="Enter unit of measure..." colWidth={12} />
+          <FormikField name="uom"  label="UOM" placeholder="Enter unit of measure..." colWidth={12} />
           <FormikField name="description" type="textarea" label="Description" placeholder="Enter description..." colWidth={12} />
         </Row>
         <Modal.Footer>

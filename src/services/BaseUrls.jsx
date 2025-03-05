@@ -1,7 +1,7 @@
 // export const BaseUrl = "https://dev.foxiomlabs.com/xtrace/api/v1/"
 // export const BaseUrl = "/api/v1/"
-export const BaseUrl = import.meta.env.VITE_BASE_URL;
-// export const BaseUrl = "http://192.168.1.80:3000/api/v1/";
+// export const BaseUrl = import.meta.env.VITE_BASE_URL;
+export const BaseUrl = "http://192.168.1.39:3000/api/v1/";
 
 export const userloginapi = "user/login"
 export const restaurantsapi = "restaurants"

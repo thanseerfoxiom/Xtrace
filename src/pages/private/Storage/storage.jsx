@@ -192,10 +192,11 @@ export default function Storage() {
     {
       header: 'Barcode ',
       accessorKey: 'vehicleNo',
+      size:180,
       cell:({row})=>{
         return(
           <div id='div-svg' style={{ height: "auto", margin: "0 auto", maxWidth: "", width: "100%"  }} onClick={() => onPrintBarcode ()} >
-            <Barcode height={50} width={1} format='CODE128'  value={StorageformatBarcode(row?.original?.id)} />
+            <Barcode height={50} width={1} format='CODE128'  value={StorageformatBarcode(row?.original?.id,row?.original?.createdAt)} />
           </div>
         )
       }

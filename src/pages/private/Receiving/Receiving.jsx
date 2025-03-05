@@ -66,7 +66,7 @@ export default function Receiving() {
     setShow(true);
     setselectData(selectedData);
   };
-  console.log("selsecteed  data ",selectData)
+  // console.log("selsecteed  data ",selectData)
   //  const onPrintBarcode = () => {
   //   var container = document.getElementById("div-svg");
   //   var mySVG = document.getElementById("barcode-canvas");
@@ -352,10 +352,11 @@ export default function Receiving() {
     {
       header: 'Barcode ',
       accessorKey: 'vehicleNo',
+      size:180,
       cell:({row})=>{
         return(
           <div id='div-svg' style={{ height: "auto", margin: "0 auto", maxWidth: "", width: "100%"  }} onClick={() => onPrintBarcode ()} >
-            <Barcode height={50} width={1} format='CODE128'  value={ReceiveformatBarcode(row?.original?.id)} />
+            <Barcode height={50} width={1} format='CODE128'  value={ReceiveformatBarcode(row?.original?.id,row?.original?.createdAt)} />
           </div>
         )
       }
@@ -442,7 +443,11 @@ export default function Receiving() {
     },}
   );
   }
- 
+  const filteruom =(product)=>{
+   
+    const uom = productlistdata?.data?.docs.find(t=>t.id===product)?.uom??""
+    return uom
+  }
   return (
     <>
        (
@@ -695,8 +700,8 @@ export default function Receiving() {
 
     }}
   >
-    {({ handleSubmit, isSubmitting,values }) => {
-      console.log(";;;;;;;;;;;;;;;;;;;;;;;;values",values)
+    {({ handleSubmit, isSubmitting,values,setFieldValue }) => {
+      // console.log(";;;;;;;;;;;;;;;;;;;;;;;;values",values)
       return (
       <Form onSubmit={handleSubmit}>
         <Row>
@@ -716,11 +721,12 @@ export default function Receiving() {
             placeholder="Select product"
             className="w-100"
             options={productlistdataOption||[]}
+            onChange={(value)=>setFieldValue("uom",filteruom(value?.value))}
             // options={pricedataOption.filter(option => option.value !== 1) || []}
             variant="border" 
           />   
           <FormikField name="quantity" type="text" label="Quantity" placeholder="Enter quantity..." colWidth={12} />
-          <FormikField name="uom" type="text" label="unit of measure" placeholder="Enter unit..." colWidth={12} />
+          <FormikField name="uom" type="text" label="unit of measure"  disabled  colWidth={12} />
           <FormikField name="productionDate" value={formatDate(values?.productionDate)} type="date" label="Product date" placeholder="Enter product date..." colWidth={12} />
           <FormikField name="expiryDate" type="date"  value={formatDate(values?.expiryDate)} label="Expiry date" placeholder="Enter Expirydate..." colWidth={12} />
           <FormikField name="temperature" type="number" label="Temperature" placeholder="Enter temperature..." colWidth={12} />
