@@ -18,7 +18,7 @@ import { restaurantsapi } from '../../../services/BaseUrls.jsx';
 import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { OperationsPath, ThermometerPath } from '../../../services/UrlPaths.jsx';
+import { OperationsPath, StoragesPath, ThermometerPath } from '../../../services/UrlPaths.jsx';
 export default function Restaurant() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide,search } = useContext(ContextDatas);
@@ -97,9 +97,10 @@ export default function Restaurant() {
                 type="button"
                 className=""
                 size='sm'
-                onClick={() =>navigate(`/${ThermometerPath}/${row?.original?.id}`,{ state: { params: params} })}
+                // onClick={()=>console.log("row ",row.original)}
+                onClick={() =>navigate(`/${StoragesPath}`,{ state: { params: {kitchenId:row.original.id}} })}
               >
-                Thermometer
+                Storage
               </Button>
              
             </li>

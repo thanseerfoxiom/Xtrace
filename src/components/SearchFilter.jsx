@@ -17,7 +17,7 @@ function SearchFilter() {
                       htmlFor="a4"
                       className="il-gray fs-14 fw-500 align-center mb-10"
                     >
-                      One of Four Columns
+                      One of Four Columns 
                     </label>
                     <input
                       type="text"

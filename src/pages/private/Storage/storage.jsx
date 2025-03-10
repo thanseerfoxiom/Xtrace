@@ -24,8 +24,10 @@ import BasicInput from '../../../components/BasicInput.jsx';
 import BasicSelect from '../../../components/BasicSelect.jsx';
 import Barcode from 'react-barcode';
 import { StorageformatBarcode } from '../../../utils/Barcode.jsx';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 export default function Storage() {
+  const location = useLocation();
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide,search } = useContext(ContextDatas);
   const [show, setShow] = useState(false);
@@ -33,12 +35,13 @@ export default function Storage() {
   const [confirmationState,setConfirmationState]=useState(false)
   const [deleteId,setDeleteId]=useState(null)
   const [selectData,setselectData] =useState('')
- 
+  const passedParams = location.state?.params; 
+  const kitchenId = passedParams?.kitchenId ?? ""
   const [params,setParams] =useState({
           
           page:1,
           limit:10,
-          restaurantId:"",
+          restaurantId:kitchenId,
           storageId:"",
         })
    
@@ -48,6 +51,7 @@ export default function Storage() {
                 search: search,
               }));
             }, [search])
+  console.log("kitchennnnnnnn ",kitchenId)
   const {mutation} = useCustomMutation();
   const { data: productlistdata} = useFetchData('product',fetchProduct);
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);
