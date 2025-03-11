@@ -20,6 +20,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { OperationsPath, ThermometerPath } from '../../../services/UrlPaths.jsx';
 import BasicSelect from '../../../components/BasicSelect.jsx';
+import { formatDate } from '../../../utils/FormatDate.jsx';
 export default function TodoHaccap() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide,search } = useContext(ContextDatas);
@@ -34,19 +35,19 @@ export default function TodoHaccap() {
    const location = useLocation();
     const backedParams = location.state?.params; 
   const [params,setParams] =useState(backedParams??{
-            
             page:1,
             limit:10,
             today:true,
-            search:""
+            // search:""
           })
      
-          useEffect(() => {
-                setParams((prev) => ({
-                  ...prev,
-                  search: search,
-                }));
-              }, [search])
+          // useEffect(() => {
+          //       setParams((prev) => ({
+          //         ...prev,
+          //         search: search,
+          //       }));
+          //     }, [search])
+
   const { data: todoList} = useFetchData('todo',fetchTODOItems,params);
   // useEffect(() => {
   //   const timer = setTimeout(() => {
@@ -69,7 +70,7 @@ export default function TodoHaccap() {
       reader.readAsDataURL(file);
     }
   };
-  console.log("statsusas",todoList?.data?.docs)
+  // console.log("statsusas",todoList?.data?.docs)
   const columns = useMemo(() => [
    
     {
@@ -77,6 +78,16 @@ export default function TodoHaccap() {
       accessorKey: 'haccp.name',
       cell:info=><strong >{info.getValue()}</strong>
     },
+        {
+          header: 'Date',
+          accessorKey: 'updatedAt',
+          cell:({row})=>{
+            const date = row.original.updatedAt
+            return (
+              formatDate(date)
+            )
+          }
+        },
     {
       header: 'Checked',
       accessorKey: 'status',
@@ -178,7 +189,7 @@ export default function TodoHaccap() {
                 <div className="col-xxl-12 mb-25">
                   <div className="card border-0 px-25">
                     <div className="card-header px-0 border-0">
-                      <h6>Haccap</h6>
+                      <h6>To Do HACCAP</h6>
                       <div className="card-extra">
                         {/* <ul
                           className="card-tab-links nav-tabs nav"

@@ -19,6 +19,7 @@ import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { OperationsPath, ThermometerPath } from '../../../services/UrlPaths.jsx';
+import { formatDate } from '../../../utils/FormatDate.jsx';
 export default function HaccapList() {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide,search } = useContext(ContextDatas);
@@ -76,12 +77,12 @@ export default function HaccapList() {
       cell:info=><strong >{info.getValue()}</strong>
     },
     // {
-    //   header: 'Status',
-    //   accessorKey: 'status',
+    //   header: 'Date',
+    //   accessorKey: 'updatedAt',
     //   cell:({row})=>{
-    //     const status = row.original.status
+    //     const date = row.original.updatedAt
     //     return (
-    //         status?"checked":"Not"
+    //       formatDate(date)
     //     )
     //   }
     // },
