@@ -55,7 +55,7 @@ function PageDashboard() {
                       </div>
                       <div className="d-flex align-items-start flex-wrap">
                         <div>
-                          <p className="mb-1 mb-0 color-gray">Total Restuarants</p>
+                          <p className="mb-1 mb-0 color-gray">Total Kitchens</p>
                           <h1>15K</h1>
                         </div>
                       </div>

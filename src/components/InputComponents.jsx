@@ -3,7 +3,7 @@ import { Form, Col } from 'react-bootstrap';
 import { useField,useFormikContext } from 'formik';
 
 // Custom Formik Field Component with dynamic column width
-const FormikField = ({ label, name, type , placeholder, colWidth = 12 , disabled = false }) => {
+const FormikField = ({ label, name, type , placeholder, colWidth = 12 , disabled = false ,onChange }) => {
   const [field, meta] = useField(name); // Hooks into Formik's context
   const { setFieldValue } = useFormikContext();
 
@@ -16,6 +16,12 @@ const FormikField = ({ label, name, type , placeholder, colWidth = 12 , disabled
         setPreview(reader.result); // Update preview once file is read
       };
       reader.readAsDataURL(file); // Read the file
+    }
+  };
+  const handleChange = (e) => {
+    field.onChange(e);
+    if (onChange) {
+      onChange(e);
     }
   };
   return (
@@ -42,6 +48,7 @@ const FormikField = ({ label, name, type , placeholder, colWidth = 12 , disabled
           placeholder={placeholder}
           {...field} // Spread Formik's field props
           disabled={disabled}
+          onChange={handleChange}
         />
         ):(
         <Form.Control
@@ -49,6 +56,7 @@ const FormikField = ({ label, name, type , placeholder, colWidth = 12 , disabled
         placeholder={placeholder}
         {...field} // Spread Formik's field props
         disabled={disabled}
+        onChange={handleChange}
       />)
     }
         

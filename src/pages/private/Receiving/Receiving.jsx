@@ -495,10 +495,11 @@ export default function Receiving() {
   };
 
   const handleStorageSubmit=(values,actions)=>{
+    const { maxquan, ...submitValues } = values;
     mutation.mutate({
         method: values?.id? "put":"post",
         url: moveItemsapi,
-        values: values,
+        values: submitValues,
         key: "storageitems",
         next: () => {
           setStorageShow(false) 
@@ -517,6 +518,23 @@ export default function Receiving() {
     const uom = productlistdata?.data?.docs.find(t=>t.id===product)?.uom??""
     return uom
   }
+  // const QuantityCheck = (setFieldError, setFieldTouched, max, value) => {
+  //   // Convert max and value to numbers
+  //   const numericMax = parseFloat(max);
+  //   const numericValue = parseFloat(value);
+  //   console.log("numericValue:", numericValue, "numericMax:", numericMax);
+  
+  //   // Mark the field as touched so error messages show up
+  //   setFieldTouched("quantity", true, false);
+    
+  //   // If numericMax is valid and the value exceeds it, set an error
+  //   if (!isNaN(numericMax) && numericValue > numericMax) {
+  //     setFieldError("quantity", `Quantity must not be more than ${numericMax}`);
+  //   } else {
+  //     // Clear the error if within range
+  //     setFieldError("quantity", "");
+  //   }
+  // };
   return (
     <>
        (
@@ -842,6 +860,7 @@ export default function Receiving() {
       restaurantId: selectData?.restaurantId || "",
       storageId: selectData?.storageId || "",
       quantity: selectData?.quantity || "",
+      maxquan : selectData?.quantity || "",
       receivingId: selectData?.id || "",
       // ...(selectData?.id ? { id: selectData.id } : {}),
     }}
@@ -849,7 +868,7 @@ export default function Receiving() {
       const errors = {};
       // Supplier validation
   if (!values.restaurantId) {
-    errors.restaurantId = 'restuarant is required';
+    errors.restaurantId = 'kitchen is required';
   }
   if (!values.storageId) {
     errors.storageId = 'storage is required';
@@ -857,7 +876,13 @@ export default function Receiving() {
   if (!values.receivingId) {
     errors.receivingId = 'receiving is required';
   }
-
+  if (values.quantity && values.maxquan) {
+    const quantity = parseFloat(values.quantity);
+    const maxquan = parseFloat(values.maxquan);
+    if (!isNaN(quantity) && !isNaN(maxquan) && quantity > maxquan) {
+      errors.quantity = `quantity must not be more than ${maxquan}`;
+    }
+  }
       return errors;
     }}
     onSubmit={(values, actions) => {
@@ -865,7 +890,7 @@ export default function Receiving() {
 
     }}
   >
-    {({ handleSubmit, isSubmitting,values }) => {
+    {({ handleSubmit,isSubmitting}) => {
       return (
       <Form onSubmit={handleSubmit}>
         <Row>
@@ -888,7 +913,7 @@ export default function Receiving() {
             // options={pricedataOption.filter(option => option.value !== 1) || []}
             variant="border" 
           />     
-          <FormikField name="quantity" type="number" label="Quantity" placeholder="Enter Quantity..." colWidth={12} />     
+          <FormikField name="quantity" type="number" disabled={true} label="Quantity"  placeholder="Enter Quantity..." colWidth={12} />     
           <SingleSelect
             name="storageId"
             label="Choose storage"
