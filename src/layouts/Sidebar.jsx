@@ -23,7 +23,10 @@ function Sidebar() {
 
   return (
     <div className="sidebar-wrapper">
-      <div className={`sidebar sidebar-collapse`} id="sidebar">
+      <div
+        className={`sidebar sidebar-collapse ${mobileSide ? "collapsed" : ""}`}
+        id="sidebar"
+      >
         <div className="sidebar__menu-group">
           <ul className="sidebar_nav">
             {/* 1. Dashboard */}
