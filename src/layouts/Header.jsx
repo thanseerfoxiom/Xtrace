@@ -12,7 +12,7 @@ function Header() {
       <nav className="navbar navbar-light">
         <div className="navbar-left">
           <div className="logo-area">
-          <h6>Xtrace</h6>
+          <h6>Ftrace</h6>
             {/* <a className="navbar-brand mt-4" href="/">
               <img className="dark" src="/img/logo/logo1-01.png" alt="logo" />
             </a> */}
