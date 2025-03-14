@@ -37,12 +37,19 @@ export default function Dishes() {
       limit:10
     })
 
-    useEffect(() => {
-          setParams((prev) => ({
-            ...prev,
-            search: search,
-          }));
-        }, [search])
+     useEffect(() => {
+           const timer = setTimeout(()=>{
+            setParams((prev) => ({
+              ...prev,
+              search: search,
+            }));
+          },300);
+          
+            return ()=>{
+              clearTimeout(timer);
+            }
+          }, [search])
+          
   const {mutation} = useCustomMutation();
   const { data: disheslistdata} = useFetchData('dishes',fetchdishesItems,params);
   let navigate = useNavigate();

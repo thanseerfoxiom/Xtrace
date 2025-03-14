@@ -46,24 +46,25 @@ export default function Thermometers() {
  
        
     useEffect(() => {
-            setParams((prev) => ({
-            ...prev,
-            search: search,
-            }));
-        }, [search])
+          const timer = setTimeout(()=>{
+           setParams((prev) => ({
+             ...prev,
+             search: search,
+           }));
+         },300);
+         
+           return ()=>{
+             clearTimeout(timer);
+           }
+         }, [search])
+         
   const {mutation} = useCustomMutation();
   const {data:thermometerList,
     error,
     loading,
     refetch: refetchthermometerList,} = useFetchData('thermometer',fetchthermometersItems,params)
 
-    useEffect(() => {
-      setParams((prev) => ({
-        ...prev,
-        search: search,
-      }));
-    }, [search])
-    
+   
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];

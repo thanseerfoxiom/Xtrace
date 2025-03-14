@@ -50,13 +50,19 @@ export default function Recepies() {
     refetch: refetchrecepieList,} = useFetchData('recepie',fetchrecepieItems,params)
   const { data: productlistdata} = useFetchData('product',fetchProduct);
 
-    useEffect(() => {
-      setParams((prev) => ({
-        ...prev,
-        search: search,
-      }));
-    }, [search])
-    
+     useEffect(() => {
+           const timer = setTimeout(()=>{
+            setParams((prev) => ({
+              ...prev,
+              search: search,
+            }));
+          },300);
+          
+            return ()=>{
+              clearTimeout(timer);
+            }
+          }, [search])
+          
   const productlistdataOption = productlistdata?.data?.docs?.map(item => ({
     label: item.name,
     value: item.id

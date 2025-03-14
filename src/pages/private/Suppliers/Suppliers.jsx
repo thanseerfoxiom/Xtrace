@@ -34,6 +34,19 @@ export default function Suppliers() {
               page:1,
               limit:10
             })
+  useEffect(() => {
+        const timer = setTimeout(()=>{
+        setParams((prev) => ({
+          ...prev,
+          search: search,
+        }));
+      },300);
+      
+        return ()=>{
+          clearTimeout(timer);
+        }
+      }, [search])
+
   const {mutation} = useCustomMutation();
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers,params);
   const { data: productlistdata} = useFetchData('product',fetchProduct);
@@ -43,7 +56,6 @@ export default function Suppliers() {
     value: item.id
   }));
 
-  console.log("evuvusbdusbjdahb",supplierslist?.data?.docs)
 
   const handleExport = () => {
     // const data = supplierslist?.data?.docs

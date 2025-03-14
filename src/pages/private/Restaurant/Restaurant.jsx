@@ -39,12 +39,19 @@ export default function Restaurant() {
             search:""
           })
      
-          useEffect(() => {
-                setParams((prev) => ({
-                  ...prev,
-                  search: search,
-                }));
-              }, [search])
+ useEffect(() => {
+       const timer = setTimeout(()=>{
+        setParams((prev) => ({
+          ...prev,
+          search: search,
+        }));
+      },300);
+      
+        return ()=>{
+          clearTimeout(timer);
+        }
+      }, [search])
+      
   const { data: restuarantlist} = useFetchData('restuarant',fetchRestuarent,params);
   // useEffect(() => {
   //   const timer = setTimeout(() => {

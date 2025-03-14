@@ -31,11 +31,18 @@ export default function Products() {
   })
 
   useEffect(() => {
+       const timer = setTimeout(()=>{
         setParams((prev) => ({
           ...prev,
           search: search,
         }));
+      },300);
+      
+        return ()=>{
+          clearTimeout(timer);
+        }
       }, [search])
+
   const {mutation} = useCustomMutation();
   // console.log("selectData",selectData)
   const { data: productlistdata} = useFetchData('product',fetchProduct,params);

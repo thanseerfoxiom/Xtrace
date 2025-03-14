@@ -48,12 +48,19 @@ export default function Receiving() {
         limit:10
       })
  
-      useEffect(() => {
-            setParams((prev) => ({
-              ...prev,
-              search: search,
-            }));
-          }, [search])
+ useEffect(() => {
+       const timer = setTimeout(()=>{
+        setParams((prev) => ({
+          ...prev,
+          search: search,
+        }));
+      },300);
+      
+        return ()=>{
+          clearTimeout(timer);
+        }
+      }, [search])
+      
   const {mutation} = useCustomMutation();
   const { data: productlistdata} = useFetchData('product',fetchProduct);
   const { data: restuarantlist} = useFetchData('restuarant',fetchRestuarent);

@@ -45,13 +45,19 @@ export default function Storage() {
           storageId:"",
         })
    
-        useEffect(() => {
-              setParams((prev) => ({
-                ...prev,
-                search: search,
-              }));
-            }, [search])
-  console.log("kitchennnnnnnn ",kitchenId)
+         useEffect(() => {
+               const timer = setTimeout(()=>{
+                setParams((prev) => ({
+                  ...prev,
+                  search: search,
+                }));
+              },300);
+              
+                return ()=>{
+                  clearTimeout(timer);
+                }
+              }, [search])
+              
   const {mutation} = useCustomMutation();
   const { data: productlistdata} = useFetchData('product',fetchProduct);
   const { data: supplierslist} = useFetchData('suppliers',fetchSuppliers);

@@ -44,25 +44,25 @@ export default function Operations() {
     limit:""
   })
  
-       console.log("jsdufgusdyuf",selectData)
-    useEffect(() => {
-            setParams((prev) => ({
-            ...prev,
-            search: search,
-            }));
-        }, [search])
+ 
   const {mutation} = useCustomMutation();
   const {data:kitchenoperationList,
     error,
     loading,
     refetch: refetchoperationList,} = useFetchData('kitchenoperations',fetchkitchenoperationsItem,params)
 
-    useEffect(() => {
-      setParams((prev) => ({
-        ...prev,
-        search: search,
-      }));
-    }, [search])
+   useEffect(() => {
+         const timer = setTimeout(()=>{
+          setParams((prev) => ({
+            ...prev,
+            search: search,
+          }));
+        },300);
+        
+          return ()=>{
+            clearTimeout(timer);
+          }
+        }, [search])
     
 
   const handleFileUpload = (e) => {

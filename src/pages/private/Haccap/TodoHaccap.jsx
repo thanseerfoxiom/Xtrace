@@ -41,12 +41,18 @@ export default function TodoHaccap() {
             // search:""
           })
      
-          // useEffect(() => {
-          //       setParams((prev) => ({
-          //         ...prev,
-          //         search: search,
-          //       }));
-          //     }, [search])
+//  useEffect(() => {
+//        const timer = setTimeout(()=>{
+//         setParams((prev) => ({
+//           ...prev,
+//           search: search,
+//         }));
+//       },300);
+      
+//         return ()=>{
+//           clearTimeout(timer);
+//         }
+//       }, [search])
 
   const { data: todoList} = useFetchData('todo',fetchTODOItems,params);
   // useEffect(() => {

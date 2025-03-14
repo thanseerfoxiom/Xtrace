@@ -40,12 +40,19 @@ export default function HaccapList() {
             search:""
           })
      
-          useEffect(() => {
-                setParams((prev) => ({
-                  ...prev,
-                  search: search,
-                }));
-              }, [search])
+           useEffect(() => {
+                 const timer = setTimeout(()=>{
+                  setParams((prev) => ({
+                    ...prev,
+                    search: search,
+                  }));
+                },300);
+                
+                  return ()=>{
+                    clearTimeout(timer);
+                  }
+                }, [search])
+                
   const { data: haccallist} = useFetchData('haccap',fetchHaccapItems,params);
   // useEffect(() => {
   //   const timer = setTimeout(() => {
