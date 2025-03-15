@@ -60,7 +60,7 @@ export default function Receiving() {
           clearTimeout(timer);
         }
       }, [search])
-      
+
   const {mutation} = useCustomMutation();
   const { data: productlistdata} = useFetchData('product',fetchProduct);
   const { data: restuarantlist} = useFetchData('restuarant',fetchRestuarent);
@@ -752,7 +752,7 @@ export default function Receiving() {
 
   // Product validation
   if (!values.productId) {
-    errors.product = 'Product is required';
+    errors.productId = 'Product is required';
   }
 
   // Production date validation
