@@ -17,5 +17,6 @@ export const OperationsPath = "operations"
 export const DetailsPath = "details"
 export const HaccapPath = "haccap"
 export const TodoPath = "todo"
+export const MainOperationsPath = "mainoperations"
 
 

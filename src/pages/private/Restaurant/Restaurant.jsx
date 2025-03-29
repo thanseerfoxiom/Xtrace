@@ -19,7 +19,7 @@ import { useCustomMutation } from '../../../services/useCustomMutation.js';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { OperationsPath, StoragesPath, ThermometerPath } from '../../../services/UrlPaths.jsx';
-export default function Restaurant() {
+export default function Restaurant({tabdata,settabdata,tabFunction}) {
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide,search } = useContext(ContextDatas);
   const [show, setShow] = useState(false);
@@ -104,8 +104,11 @@ export default function Restaurant() {
                 type="button"
                 className=""
                 size='sm'
-                // onClick={()=>console.log("row ",row.original)}
-                onClick={() =>navigate(`/${StoragesPath}`,{ state: { params: {kitchenId:row.original.id}} })}
+                onClick={() => {
+                  settabdata({ ...tabdata, kitchenId: row.original.id });
+                  tabFunction("Storage");
+                }}
+                // onClick={() =>navigate(`/${StoragesPath}`,{ state: { params: {kitchenId:row.original.id}} })}
               >
                 Storage
               </Button>
@@ -202,15 +205,12 @@ export default function Restaurant() {
  
   return (
     <>
-       (
-        <div className={`contents ${mobileSide ? 'expanded' : ''}`}>
+       
+        <div >
           <div className="demo2 mb-25 t-thead-bg">
-            <div className="container-fluid">
-              <div className="row mt-20">
-                <div className="col-xxl-12 mb-25">
-                  <div className="card border-0 px-25">
+                  <div className="">
                     <div className="card-header px-0 border-0">
-                      <h6>Kitchen</h6>
+                      {/* <h6>Kitchen</h6> */}
                       <div className="card-extra">
                         <ul
                           className="card-tab-links nav-tabs nav"
@@ -258,9 +258,6 @@ export default function Restaurant() {
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
           </div>
          
           <Commonmodal show={show} handleClose={handleClose} title={"Product"}>
@@ -319,7 +316,7 @@ export default function Restaurant() {
         onCancel={setConfirmationState}
       />
         </div>
-      )
+      
     </>
   );
 }

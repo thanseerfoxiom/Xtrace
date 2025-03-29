@@ -190,7 +190,7 @@ export default function Operations() {
                     <li>
                         <button
                     
-                        onClick={() =>navigate(`/${RestuarantPath}`,{ state: { params: passedParams} })}
+                    onClick={() => navigate(-1)}
                         type="button"
                         className="border-0"
                         size='sm'

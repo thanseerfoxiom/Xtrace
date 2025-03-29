@@ -544,15 +544,13 @@ export default function Receiving() {
   // };
   return (
     <>
-       (
-        <div className={`contents ${mobileSide ? 'expanded' : ''}`}>
+
+        <div >
           <div className="demo2 mb-25 t-thead-bg">
-            <div className="container-fluid">
-              <div className="row mt-20">
-                <div className="col-xxl-12 mb-25">
-                  <div className="card border-0 px-25">
+            
+                  <div className="">
                     <div className="card-header px-0 border-0">
-                      <h6>Receiving</h6>
+               
                       <div className="card-extra">
                         <ul
                           className="card-tab-links nav-tabs nav"
@@ -713,9 +711,7 @@ export default function Receiving() {
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
+                
           </div>
           <Commonmodal show={show} handleClose={handleClose} title={"Product"}>
   <Formik
@@ -944,7 +940,7 @@ export default function Receiving() {
   </Formik>
       </Commonmodal>
         </div>
-      )
+
     </>
   );
 }

@@ -26,7 +26,7 @@ import Barcode from 'react-barcode';
 import { StorageformatBarcode } from '../../../utils/Barcode.jsx';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-export default function Storage() {
+export default function Storage({tabdata,settabdata,tabFunction}) {
   const location = useLocation();
   const [pageLoading, setpageLoading] = useState(true);
   const { mobileSide,search } = useContext(ContextDatas);
@@ -36,7 +36,7 @@ export default function Storage() {
   const [deleteId,setDeleteId]=useState(null)
   const [selectData,setselectData] =useState('')
   const passedParams = location.state?.params; 
-  const kitchenId = passedParams?.kitchenId ?? ""
+  const kitchenId = tabdata?.kitchenId ?? ""
   const [params,setParams] =useState({
           
           page:1,
@@ -281,41 +281,12 @@ export default function Storage() {
   // };
   return (
     <>
-       (
-        <div className={`contents ${mobileSide ? 'expanded' : ''}`}>
+      
+        <div >
           <div className="demo2 mb-25 t-thead-bg">
-            <div className="container-fluid">
-              <div className="row mt-50">
-                <div className="col-xxl-12 mb-25">
-                  <div className="card border-0 px-25">
-                    <div className="card-header px-0 border-0">
-                      <h6>Storages</h6>
-                      {/* <div className="card-extra">
-                        <ul
-                          className="card-tab-links nav-tabs nav"
-                          role="tablist"
-                        >
-                          
-                          
-                          <li>
-                            <a
-                              href="#t_selling-month333"
-                              data-bs-toggle="tab"
-                              id="t_selling-month333-tab"
-                              role="tab"
-                              aria-selected="true"
-                              className='active'
-                              onClick={()=>
-                              {handleShow(); 
-                                setselectData('')}
-                              }
-                            >
-                              Add New +
-                            </a>
-                          </li>
-                        </ul>
-                      </div> */}
-                    </div>
+            
+                  <div >
+                    
                     <div className='row'>
       
     <div className='col-6 col-md-3'>
@@ -455,9 +426,7 @@ export default function Storage() {
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
+               
           </div>
           {/* <Commonmodal show={show} handleClose={handleClose} title={"Product"}>
   <Formik
@@ -560,7 +529,7 @@ export default function Storage() {
         onCancel={setConfirmationState}
       />
         </div>
-      )
+      
     </>
   );
 }

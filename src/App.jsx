@@ -9,6 +9,7 @@ import {
   DetailsPath,
   DishesPath,
   HaccapPath,
+  MainOperationsPath,
   OperationsPath,
   ProductsPath,
   ReceipePath,
@@ -36,6 +37,7 @@ import Details from "./pages/private/Receiving/Details";
 import Operations from "./pages/private/Restaurant/Operations";
 import HaccapList from "./pages/private/Haccap/HaccapList";
 import TodoHaccap from "./pages/private/Haccap/TodoHaccap";
+import MainOpertaions from "./pages/private/Operations/Opertaions";
 
 
 
@@ -95,6 +97,10 @@ function App() {
           <Route
             path={`${basePath+TodoPath}`}
             element={<TodoHaccap />}
+          /> 
+           <Route
+            path={`${basePath+MainOperationsPath}`}
+            element={<MainOpertaions />}
           /> 
         </Route>
         

@@ -39439,3 +39439,16 @@ body:after {
     color: var(--color-light)
 }
 
+.tab-btn {
+
+    border-radius: 0;
+    background-color: transparent !important;
+    color: #3a3a3a !important;
+    
+  }
+  
+  .tab-btn.active {
+    border-bottom: 4px solid #0d6efd !important;
+    color: #0d6efd !important;
+    margin: 1px !important;
+  }

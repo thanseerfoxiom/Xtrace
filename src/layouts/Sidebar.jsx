@@ -4,6 +4,7 @@ import {
   basePath,
   DishesPath,
   HaccapPath,
+  MainOperationsPath,
   OperationsPath,
   ProductsPath,
   ReceivingPath,
@@ -69,9 +70,15 @@ function Sidebar() {
                 <span className="menu-text">ToDo HACCAP</span>
               </Link>
             </li>
+            <li className={currentPath.includes(MainOperationsPath) ? "active ms-2" : ""}>
+              <Link to={basePath + MainOperationsPath}>
+              <span className="nav-icon uil uil-cog" />
+              <span className="menu-text">Operations</span>
+              </Link>
+            </li>
 
             {/* 6. Operations (Parent Menu) */}
-            <li
+            {/* <li
               className={
                 currentPath.includes(RestuarantPath) ||
                 currentPath.includes(StoragesPath) ||
@@ -92,7 +99,7 @@ function Sidebar() {
                 )}
               </a>
 
-              {/* Sub-menu */}
+       
               {menuop && (
                 <div>
                   <ul className="sub-menu ms-3">
@@ -117,7 +124,7 @@ function Sidebar() {
                   </ul>
                 </div>
               )}
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>
